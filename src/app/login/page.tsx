@@ -8,49 +8,25 @@ import { authService } from '@/services/auth';
 
 export default function LoginPage() {
   const router = useRouter();
-
-  // Login Mode: 'team' or 'admin'
-  const [loginMode, setLoginMode] = useState<'team' | 'admin'>('team');
-
-  // Form Fields
-  const [teamName, setTeamName] = useState('TEAM_014');
-  const [passcode, setPasscode] = useState('1111');
-  const [email, setEmail] = useState('admin@codechefvit.com');
-  const [password, setPassword] = useState('admin123');
-
-  // Error Alert State
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [teamName, setTeamName] = useState('CODEWARRIORS');
+  const [passcode, setPasscode] = useState('1234');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg(null);
     setLoading(true);
+    setError(null);
 
-    try {
-      if (loginMode === 'team') {
-        const res = await authService.login({ teamName, passcode });
-        if (res.error) {
-          setErrorMsg(res.error);
-        } else {
-          // Navigate to participant dashboard
-          router.push('/dashboard');
-        }
-      } else {
-        const res = await authService.login({ email, password });
-        if (res.error) {
-          setErrorMsg(res.error);
-        } else {
-          // Navigate to admin command center
-          router.push('/admin');
-        }
-      }
-    } catch (err) {
-      console.error('Login submit error:', err);
-      setErrorMsg('Could not establish connection to the authorization service.');
-    } finally {
-      setLoading(false);
+    const result = await authService.login({ teamName, passcode });
+
+    if (result.success) {
+      router.push('/dashboard');
+      return;
     }
+
+    setError(result.error ?? 'Login failed. Please try again.');
+    setLoading(false);
   };
 
   return (
@@ -76,7 +52,7 @@ export default function LoginPage() {
                   Authentication
                 </span>
                 <h1 className="text-2xl font-black uppercase tracking-tight text-white mt-0.5">
-                  Portal Sign-in
+                  Team Login
                 </h1>
               </div>
               <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium rounded-full border bg-cyan-500/10 border-cyan-500/30 text-cyan-400 px-2.5 py-1">
@@ -85,53 +61,15 @@ export default function LoginPage() {
               </span>
             </div>
 
-            {/* Mode Switcher Tabs */}
-            <div className="flex bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-lg p-1 mb-6 font-mono text-xs select-none">
-              <button
-                onClick={() => {
-                  setLoginMode('team');
-                  setErrorMsg(null);
-                }}
-                className={`flex-1 py-2 text-center rounded-md font-bold uppercase transition-all cursor-pointer ${
-                  loginMode === 'team'
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Team Login
-              </button>
-              <button
-                onClick={() => {
-                  setLoginMode('admin');
-                  setErrorMsg(null);
-                }}
-                className={`flex-1 py-2 text-center rounded-md font-bold uppercase transition-all cursor-pointer ${
-                  loginMode === 'admin'
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Organizer Login
-              </button>
-            </div>
-
             <div className="p-4 mb-6 rounded bg-[var(--surface-secondary)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)]">
-              <p className="font-mono font-semibold text-purple-400 mb-1">Quick Access Credentials</p>
-              {loginMode === 'team' ? (
-                <p>
-                  Enter Team Name (e.g. <strong className="text-white">TEAM_014</strong> or{' '}
-                  <strong className="text-white">CODEWARRIORS</strong>) and Passcode (e.g.{' '}
-                  <strong className="text-white">1111</strong> or <strong className="text-white">1234</strong>).
-                </p>
-              ) : (
-                <p>
-                  Enter Email: <strong className="text-white">admin@codechefvit.com</strong> and Password:{' '}
-                  <strong className="text-white">admin123</strong>.
-                </p>
-              )}
+              <p className="font-mono font-semibold text-purple-400 mb-1">Demo Credentials</p>
+              <p>
+                Use Team Name <strong className="text-white">CODEWARRIORS</strong> and Passcode{' '}
+                <strong className="text-white">1234</strong> to access the event dashboard.
+              </p>
             </div>
 
-            {errorMsg && (
+            {error && (
               <div
                 role="alert"
                 className="p-3 mb-6 rounded bg-rose-500/10 border border-rose-500/30 text-xs text-rose-400 flex items-start gap-2"
@@ -144,76 +82,40 @@ export default function LoginPage() {
                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                   />
                 </svg>
-                <span>{errorMsg}</span>
+                <span>{error}</span>
               </div>
             )}
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-              {loginMode === 'team' ? (
-                <>
-                  <div>
-                    <label className="block text-xs font-mono text-[var(--text-muted)] uppercase mb-1 tracking-wide">
-                      Team Name
-                    </label>
-                    <input
-                      type="text"
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                      placeholder="e.g. TEAM_014"
-                      required
-                      disabled={loading}
-                      className="w-full px-3 py-2 bg-[var(--surface-secondary)] border border-[var(--border)] rounded text-xs text-white focus:outline-none focus:ring-2 focus:ring-[var(--focus)] disabled:opacity-50"
-                    />
-                  </div>
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] uppercase mb-1 tracking-wide">
+                  Team Name / ID
+                </label>
+                <input
+                  type="text"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  placeholder="e.g. CODEWARRIORS"
+                  required
+                  disabled={loading}
+                  className="w-full px-3 py-2 bg-[var(--surface-secondary)] border border-[var(--border)] rounded text-xs text-white focus:outline-none focus:ring-2 focus:ring-[var(--focus)] disabled:opacity-50"
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-xs font-mono text-[var(--text-muted)] uppercase mb-1 tracking-wide">
-                      Passcode
-                    </label>
-                    <input
-                      type="password"
-                      value={passcode}
-                      onChange={(e) => setPasscode(e.target.value)}
-                      placeholder="••••"
-                      required
-                      disabled={loading}
-                      className="w-full px-3 py-2 bg-[var(--surface-secondary)] border border-[var(--border)] rounded text-xs text-white focus:outline-none focus:ring-2 focus:ring-[var(--focus)] disabled:opacity-50"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <label className="block text-xs font-mono text-[var(--text-muted)] uppercase mb-1 tracking-wide">
-                      Organizer Email
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@codechefvit.com"
-                      required
-                      disabled={loading}
-                      className="w-full px-3 py-2 bg-[var(--surface-secondary)] border border-[var(--border)] rounded text-xs text-white focus:outline-none focus:ring-2 focus:ring-[var(--focus)] disabled:opacity-50"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-[var(--text-muted)] uppercase mb-1 tracking-wide">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                      disabled={loading}
-                      className="w-full px-3 py-2 bg-[var(--surface-secondary)] border border-[var(--border)] rounded text-xs text-white focus:outline-none focus:ring-2 focus:ring-[var(--focus)] disabled:opacity-50"
-                    />
-                  </div>
-                </>
-              )}
+              <div>
+                <label className="block text-xs font-mono text-[var(--text-muted)] uppercase mb-1 tracking-wide">
+                  Passcode
+                </label>
+                <input
+                  type="password"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                  className="w-full px-3 py-2 bg-[var(--surface-secondary)] border border-[var(--border)] rounded text-xs text-white focus:outline-none focus:ring-2 focus:ring-[var(--focus)] disabled:opacity-50"
+                />
+              </div>
 
               <button
                 type="submit"
@@ -241,7 +143,7 @@ export default function LoginPage() {
                   </>
                 ) : (
                   <>
-                    <span className="relative z-10">LOG IN AS {loginMode.toUpperCase()}</span>
+                    <span className="relative z-10">LOGIN TO EVENT</span>
                     <svg
                       className="relative z-10 w-4 h-4 text-cyan-300 group-hover:translate-x-1 transition-transform duration-300"
                       fill="none"
