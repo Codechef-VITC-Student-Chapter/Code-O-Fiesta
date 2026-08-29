@@ -16,7 +16,7 @@ export interface EventTimelineCardProps {
 }
 
 const DEFAULT_TIMELINE: TimelineStep[] = [
-  { id: '1', name: 'ROUND 01', subname: 'Maze of Fate', status: 'ACTIVE', detail: 'In Progress' },
+  { id: '1', name: 'ROUND 01', subname: 'Path of Fate', status: 'ACTIVE', detail: 'In Progress' },
   { id: '2', name: 'ROUND 02', subname: 'Blind Relay', status: 'Locked', detail: 'Locked' },
   { id: '3', name: 'ROUND 03', subname: 'Constraint Crucible', status: 'Locked', detail: 'Locked' },
   { id: '4', name: 'RESULTS', subname: 'Leaderboard', status: 'Upcoming', detail: 'Upcoming' },

@@ -39,7 +39,7 @@ export default function ActiveRoundCard({ className = '' }: ActiveRoundCardProps
             ACTIVE ROUND
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            The Maze of Fate
+            The Path of Fate
           </h2>
           <p className="text-xs text-slate-300 max-w-xl leading-relaxed mt-1">
             Four mysterious paths lie ahead. Choose one shape to reveal a hidden domain and begin your challenge.

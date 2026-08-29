@@ -61,7 +61,7 @@ export default function DashboardPage() {
           <SummaryCard
             title="CURRENT STAGE"
             value="ROUND 01"
-            subtitle="Maze of Fate"
+            subtitle="Path of Fate"
             accentColor="purple"
             icon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

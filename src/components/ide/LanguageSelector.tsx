@@ -14,10 +14,11 @@ export default function LanguageSelector({ currentLanguage, onChange }: Language
   const [pendingLang, setPendingLang] = useState<SupportedLanguage | null>(null);
 
   const languages: { val: SupportedLanguage; label: string }[] = [
+    { val: 'c', label: 'C (GCC 11)' },
     { val: 'cpp', label: 'C++ 17' },
-    { val: 'python', label: 'Python 3' },
     { val: 'java', label: 'Java 17' },
-    { val: 'javascript', label: 'JavaScript (Node 18)' },
+    { val: 'python', label: 'Python 3' },
+    { val: 'go', label: 'Go 1.21' },
   ];
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {

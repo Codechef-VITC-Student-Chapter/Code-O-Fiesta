@@ -5,14 +5,16 @@ import { submissionsService } from '@/services/submissions';
 
 export function getDefaultCode(language: SupportedLanguage): string {
   switch (language) {
+    case 'c':
+      return `#include <stdio.h>\n\nint main() {\n    // write your code here\n    return 0;\n}`;
     case 'cpp':
       return `#include <iostream>\nusing namespace std;\n\nint main() {\n    // write your code here\n    return 0;\n}`;
     case 'python':
       return `# write your code here\n`;
     case 'java':
       return `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // write your code here\n    }\n}`;
-    case 'javascript':
-      return `// write your code here\n`;
+    case 'go':
+      return `package main\n\nimport "fmt"\n\nfunc main() {\n    // write your code here\n}`;
     default:
       return '';
   }

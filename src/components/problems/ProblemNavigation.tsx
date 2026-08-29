@@ -73,10 +73,10 @@ export default function ProblemNavigation({
       {/* Back link */}
       <div className="flex justify-center mt-1">
         <Link
-          href="/round-1/maze"
+          href="/round-1/path"
           className="text-[10px] font-bold text-[var(--text-secondary)] hover:text-purple-400 uppercase tracking-wider underline transition-colors"
         >
-          All Problems (Maze Dashboard)
+          All Problems (Path Dashboard)
         </Link>
       </div>
     </div>

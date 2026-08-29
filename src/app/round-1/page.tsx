@@ -14,9 +14,9 @@ export default function Round1Page() {
           <div className="text-[10px] font-mono text-purple-400 font-bold uppercase mb-1">
             [ NETHRA / ROUND 1 OWNER PLACEHOLDER ]
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Round 1: The Maze of Fate</h2>
+          <h2 className="text-xl font-bold text-white mb-2">Round 1: The Path of Fate</h2>
           <p className="text-xs text-slate-300">
-            This page consumes <code className="font-mono text-cyan-400">ParticipantLayout</code>. Nethra will implement topic card selections, maze progression, problem panels, and IDE integration here.
+            This page consumes <code className="font-mono text-cyan-400">ParticipantLayout</code>. Nethra will implement topic card selections, path progression, problem panels, and IDE integration here.
           </p>
         </div>
       </div>
