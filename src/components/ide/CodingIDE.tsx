@@ -34,7 +34,7 @@ import ErrorState from '@/components/common/ErrorState';
 import ForcedSwitchOverlay from '@/components/round2/ForcedSwitchOverlay';
 import ActiveMemberIndicator from '@/components/round2/ActiveMemberIndicator';
 import RelayStatus from '@/components/round2/RelayStatus';
-import ConstraintPanel from '@/components/round3/ConstraintPanel';
+
 
 const CodeEditor = dynamic(() => import('./CodeEditor'), { ssr: false });
 
@@ -90,7 +90,7 @@ export default function CodingIDE({
     submit,
     resetCode,
     fetchHistory,
-  } = useCodingIDE(problemId, mode, roundConfig, readOnly || isSolved);
+  } = useCodingIDE(problemId, mode, roundNumber, roundConfig, readOnly || isSolved);
 
   // 3. UI and layout states
   const [splitWidth, setSplitWidth] = useState(40); // left panel width %
@@ -270,9 +270,12 @@ export default function CodingIDE({
               hideProblemStatement={hideProblemStatement}
               prevProblemId={prevProblemId}
               nextProblemId={nextProblemId}
+              submitResult={submitResult}
+              submissionCount={submissionHistory.length}
+              isSolved={isSolved}
               onNavigate={(id) => {
-                // Navigate to next/prev problem using Next.js path or routing trigger
-                window.location.href = `/round-1/problem/${id}`;
+                // Navigate to next/prev problem using dynamic round path
+                window.location.href = `/round-${roundNumber}/problem/${id}`;
               }}
               onUseAsInput={(text) => {
                 setCustomInput(text);
@@ -354,7 +357,7 @@ export default function CodingIDE({
                     />
                   }
                   outputChild={
-                    <OutputPanel runResult={runResult} isRunning={isRunning} />
+                    <OutputPanel runResult={runResult} isRunning={isRunning} errorMsg={errorMsg} />
                   }
                   verdictChild={
                     showFullVerdict ? (
@@ -409,15 +412,6 @@ export default function CodingIDE({
                   <RelayStatus 
                     activeTeamMember={roundConfig?.activeTeamMember || 'member1'} 
                     timeLeftSeconds={timeLeft} 
-                  />
-                </div>
-              )}
-              {mode === 'constraint' && (
-                <div className="mx-auto w-full max-w-md hidden md:block">
-                  <ConstraintPanel
-                    isSolved={isSolved}
-                    submitResult={submitResult}
-                    submissionCount={submissionHistory.length}
                   />
                 </div>
               )}

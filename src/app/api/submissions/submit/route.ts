@@ -1,55 +1,213 @@
 import { NextResponse } from 'next/server';
+import { Types } from 'mongoose';
+
 import connectDB from '@/lib/db';
 import Submission from '@/models/Submission';
+import Problem from '@/models/Problem';
+import Round from '@/models/Round';
+import TeamRound from '@/models/TeamRound';
+import { submitBatch, LANGUAGE_IDS, Judge0Submission } from '@/lib/judge0';
+import { analyzeSourceCode } from '../../_services/ast.service';
+import { requireAuthentication } from '../../_lib/authorization';
+import {
+  incrementRound3SubmissionCount,
+} from '../../_services/round3.service';
+import { RoundStatus } from '@/constants/event';
 
 declare global {
-  var submissionCache: Map<string, { code: string; language: string; problemId: string }> | undefined;
+  var submissionCache:
+    | Map<
+      string,
+      {
+        code: string;
+        language: string;
+        problemId: string;
+        roundNumber?: number;
+        tokens?: string[];
+        astResult?: any;
+        teamId?: string;
+        userId?: string;
+        roundId?: string;
+        isFirstAttempt?: boolean;
+      }
+    >
+    | undefined;
 }
 
 export async function POST(request: Request) {
   try {
+    // ── Auth ──────────────────────────────────────────────────────────────
+    const session = await requireAuthentication(request);
+    const userId = session.userId;
+    const teamId = session.teamId;
+
+    if (!teamId) {
+      return NextResponse.json({ error: 'User is not part of a team' }, { status: 403 });
+    }
+
+    // ── Parse body ────────────────────────────────────────────────────────
     const body = await request.json();
-    const { problemId, code, language } = body;
+    const { problemId, code, language, roundNumber } = body;
+
+    if (!problemId || !code || !language) {
+      return NextResponse.json({ error: 'Missing required fields: problemId, code, language' }, { status: 400 });
+    }
+
+    const languageId = LANGUAGE_IDS[language];
+    if (!languageId) {
+      return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
+    }
 
     let submissionId = `sub_${Date.now()}`;
+    let tokens: string[] = [];
+    let problemDetails: any = null;
+    let roundId: string | undefined;
 
-    if (process.env.MONGODB_URI) {
+    // ── AST Analysis (Round 3 only) ────────────────────────────────────────
+    let astResult: any = undefined;
+    if (roundNumber === 3) {
       try {
-        await connectDB();
-        
-        // Mock teamId, userId, roundId since auth is mock
-        const mongoose = require('mongoose');
-        const teamId = new mongoose.Types.ObjectId();
-        const userId = new mongoose.Types.ObjectId();
-        const roundId = new mongoose.Types.ObjectId();
-        
-        const count = await Submission.countDocuments({ problemId });
-
-        const sub = await Submission.create({
-          teamId,
-          userId,
-          roundId,
-          problemId: new mongoose.Types.ObjectId(problemId.length === 24 ? problemId : undefined),
-          sourceCode: code,
-          language,
-          submissionNumber: count + 1,
-          verdict: 'ACCEPTED', // Pre-mock verdict
-        });
-
-        submissionId = sub._id.toString();
-      } catch (dbErr) {
-        console.error('Failed to save submission to DB, returning mock ID:', dbErr);
+        astResult = await analyzeSourceCode(code, language);
+      } catch (astErr) {
+        console.error('AST Analysis failed during submission:', astErr);
       }
     }
 
-    // Cache the submission code and metadata for dynamic judging during polling
+    // ── DB Submission ──────────────────────────────────────────────────────
+    await connectDB();
+
+    // Resolve roundId from the active round
+    const round = await Round.findOne({
+      roundNumber: roundNumber ?? 1,
+      status: RoundStatus.ACTIVE,
+    }).lean();
+
+    if (round) {
+      roundId = (round as any)._id.toString();
+    } else {
+      // Fall back to any round matching the number (e.g. if round is COMPLETED)
+      const anyRound = await Round.findOne({ roundNumber: roundNumber ?? 1 }).lean();
+      if (anyRound) roundId = (anyRound as any)._id.toString();
+    }
+
+    // Fetch test cases
+    if (Types.ObjectId.isValid(problemId)) {
+      const problem = await Problem.findById(problemId);
+      if (problem) {
+        problemDetails = problem;
+        const testCases = [
+          ...(problem.visibleTestCases || []),
+          ...(problem.hiddenTestCases || []),
+        ];
+        const testsToRun =
+          testCases.length > 0
+            ? testCases
+            : (problem.examples || []).map((ex: any) => ({
+              input: ex.input,
+              expectedOutput: ex.output,
+            }));
+
+        if (testsToRun.length > 0) {
+          const submissions: Judge0Submission[] = testsToRun.map((tc: any) => ({
+            source_code: code,
+            language_id: languageId,
+            stdin: tc.input || '',
+            expected_output: tc.expectedOutput || '',
+            cpu_time_limit: problem.cpuTimeLimit || 2.0,
+            memory_limit: problem.memoryLimit || 128000,
+          }));
+
+          const batchResult = await submitBatch(submissions);
+          tokens = batchResult.map((res) => res.token);
+        }
+      }
+    }
+
+    // For round 3: determine if this is the first attempt BEFORE creating the submission
+    let isFirstAttempt = true;
+    if (roundNumber === 3 && roundId && teamId) {
+      try {
+        const teamRound = await TeamRound.findOne({
+          teamId: new Types.ObjectId(teamId),
+          roundId: new Types.ObjectId(roundId),
+        }).lean() as any;
+
+        if (teamRound?.round3?.problems) {
+          const entry = teamRound.round3.problems.find(
+            (p: any) => p.problemId?.toString() === problemId,
+          );
+          // isFirstAttempt if no previous submissions for this problem
+          isFirstAttempt = (entry?.submissionCount ?? 0) === 0;
+        }
+      } catch (e) {
+        console.error('Failed to check submission count:', e);
+      }
+    }
+
+    // Count existing submissions for submissionNumber
+    const count = await Submission.countDocuments({
+      problemId: Types.ObjectId.isValid(problemId) ? new Types.ObjectId(problemId) : undefined,
+      teamId: new Types.ObjectId(teamId),
+    });
+
+    const sub = await Submission.create({
+      teamId: new Types.ObjectId(teamId),
+      userId: new Types.ObjectId(userId),
+      roundId: roundId ? new Types.ObjectId(roundId) : new Types.ObjectId(),
+      problemId: Types.ObjectId.isValid(problemId)
+        ? new Types.ObjectId(problemId)
+        : new Types.ObjectId(),
+      sourceCode: code,
+      language,
+      submissionNumber: count + 1,
+      verdict: 'PENDING',
+      judge0: {
+        token: tokens.join(','),
+      },
+      ...(astResult && { astAnalysis: astResult }),
+    });
+
+    submissionId = sub._id.toString();
+
+    // For round 3: increment submission count in TeamRound
+    if (roundNumber === 3 && roundId && teamId) {
+      try {
+        await incrementRound3SubmissionCount(
+          new Types.ObjectId(teamId),
+          new Types.ObjectId(roundId),
+          problemId,
+        );
+      } catch (e) {
+        console.error('Failed to increment round3 submission count:', e);
+      }
+    }
+
+    // Fallback tokens if no test cases found
+    if (tokens.length === 0) {
+      return NextResponse.json({ error: 'Problem has no configured test cases' }, { status: 400 });
+    }
+
+    // Cache for polling
     if (!globalThis.submissionCache) {
       globalThis.submissionCache = new Map();
     }
-    globalThis.submissionCache.set(submissionId, { code, language, problemId });
+    globalThis.submissionCache.set(submissionId, {
+      code,
+      language,
+      problemId,
+      roundNumber,
+      tokens,
+      astResult,
+      teamId,
+      userId,
+      roundId,
+      isFirstAttempt,
+    });
 
     return NextResponse.json({ submissionId });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Submit error:', err);
+    const status = err?.status ?? 500;
+    return NextResponse.json({ error: err.message }, { status });
   }
 }
