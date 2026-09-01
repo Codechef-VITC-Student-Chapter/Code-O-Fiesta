@@ -15,11 +15,16 @@ const COOLDOWN_SECONDS = 5;
  * document automatically once the cooldown window lapses. This works across
  * multiple Next.js workers and never leaks memory.
  */
-function getRunRateLimitModel() {
+interface RunRateLimitDoc {
+  _id: string;
+  expiresAt: Date;
+}
+
+function getRunRateLimitModel(): mongoose.Model<RunRateLimitDoc> {
   if (mongoose.models.RunRateLimit) {
-    return mongoose.models.RunRateLimit;
+    return mongoose.models.RunRateLimit as mongoose.Model<RunRateLimitDoc>;
   }
-  const schema = new mongoose.Schema(
+  const schema = new mongoose.Schema<RunRateLimitDoc>(
     {
       _id: { type: String }, // userId or IP
       expiresAt: { type: Date, required: true },
@@ -27,7 +32,7 @@ function getRunRateLimitModel() {
     { collection: 'run_rate_limits' },
   );
   schema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-  return mongoose.model('RunRateLimit', schema);
+  return mongoose.model<RunRateLimitDoc>('RunRateLimit', schema);
 }
 
 async function isRateLimited(key: string): Promise<boolean> {
