@@ -79,6 +79,8 @@ const ParticipantIntegritySchema = new Schema(
   }
 );
 
+ParticipantIntegritySchema.index({ integrityScore: -1 });
+
 export type ParticipantIntegrityDocument = InferSchemaType<typeof ParticipantIntegritySchema>;
 
 const ParticipantIntegrity =

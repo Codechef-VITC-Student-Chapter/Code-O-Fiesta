@@ -117,6 +117,12 @@ const SubmissionSchema = new Schema(
 SubmissionSchema.index({ teamId: 1, problemId: 1, createdAt: -1 });
 SubmissionSchema.index({ teamId: 1, roundId: 1, createdAt: -1 });
 SubmissionSchema.index({ problemId: 1, createdAt: -1 });
+// Submit cooldown check and per-team history: latest submission for a team.
+SubmissionSchema.index({ teamId: 1, createdAt: -1 });
+// "Has this team solved this problem" lookups.
+SubmissionSchema.index({ teamId: 1, problemId: 1, verdict: 1 });
+// Admin "recent submissions" feeds.
+SubmissionSchema.index({ createdAt: -1 });
 
 export type SubmissionDocument = InferSchemaType<typeof SubmissionSchema>;
 

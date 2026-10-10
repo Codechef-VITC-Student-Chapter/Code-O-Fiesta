@@ -6,7 +6,7 @@ import Submission from '@/models/Submission';
 import Round from '@/models/Round';
 import { getBatchSubmissions, Judge0Result } from '@/lib/judge0';
 import { requireAuthentication } from '@/app/api/_lib/authorization';
-import { SubmissionVerdict } from '@/constants/event';
+import { SubmissionVerdict, UserRole } from '@/constants/event';
 import {
   computeRound3Result,
   persistRound3ProblemResult,
@@ -106,6 +106,21 @@ export async function GET(
         { error: 'Submission not found or has no tokens' },
         { status: 404 },
       );
+    }
+
+    // Ownership: a submission (verdict, failing output, scoring side effects)
+    // is only visible to the team that made it. Respond 404 rather than 403
+    // so submission ids can't be probed for existence.
+    if (session.role !== UserRole.ADMIN) {
+      const ownerTeamId = isDb
+        ? dbSubmission?.teamId?.toString()
+        : cachedMeta?.teamId;
+      if (!teamId || !ownerTeamId || ownerTeamId !== teamId) {
+        return NextResponse.json(
+          { error: 'Submission not found or has no tokens' },
+          { status: 404 },
+        );
+      }
     }
 
     // 3. Poll Judge0

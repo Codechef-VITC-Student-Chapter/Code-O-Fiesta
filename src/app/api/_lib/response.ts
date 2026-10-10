@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { ApiError } from './errors';
+import { ApiError, TooManyRequestsError } from './errors';
 
 export function successResponse<T>(
   data: T,
@@ -10,6 +10,16 @@ export function successResponse<T>(
 }
 
 export function errorResponse(error: unknown, statusOverride?: number) {
+  if (error instanceof TooManyRequestsError) {
+    return NextResponse.json(
+      { message: error.message },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(error.retryAfterSeconds) },
+      },
+    );
+  }
+
   if (error instanceof ApiError) {
     return NextResponse.json(
       {

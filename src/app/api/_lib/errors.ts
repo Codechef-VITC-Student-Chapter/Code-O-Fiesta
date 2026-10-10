@@ -31,3 +31,12 @@ export class BadRequestError extends ApiError {
     super(400, message);
   }
 }
+
+export class TooManyRequestsError extends ApiError {
+  constructor(
+    message = 'Too many requests. Please try again later.',
+    public retryAfterSeconds = 60,
+  ) {
+    super(429, message);
+  }
+}

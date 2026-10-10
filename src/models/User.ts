@@ -57,6 +57,11 @@ const UserSchema = new Schema(
   },
 );
 
+// Login looks users up by email (+ teamMember for participants, + role for
+// admins). Without these every login is a full collection scan.
+UserSchema.index({ email: 1, teamMember: 1 });
+UserSchema.index({ email: 1, role: 1 });
+
 UserSchema.index({ teamId: 1 });
 
 UserSchema.index(
