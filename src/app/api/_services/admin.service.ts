@@ -8,6 +8,12 @@ import '@/models/Problem';
 import { RoundStatus, TeamRoundStatus } from '@/constants/event';
 import { BadRequestError, NotFoundError } from '../_lib/errors';
 
+// Never populate full User documents into admin responses: they carry
+// passwordHash and the live sessionId. Hidden test cases are likewise kept
+// out of populated problems.
+const SAFE_MEMBER_FIELDS = 'name email role teamMember teamId isActive';
+const SAFE_PROBLEM_FIELDS = '-hiddenTestCases -visibleTestCases';
+
 export async function getAdminState() {
   await connectDB();
 
@@ -25,7 +31,10 @@ export async function getAdminState() {
   const recentSubmissions = await Submission.find()
     .sort({ createdAt: -1 })
     .limit(10)
-    .populate('teamId problemId')
+    .populate([
+      { path: 'teamId' },
+      { path: 'problemId', select: SAFE_PROBLEM_FIELDS },
+    ])
     .lean();
 
   return {
@@ -45,7 +54,7 @@ export async function getAllTeams() {
   await connectDB();
 
   return Team.find()
-    .populate('members')
+    .populate('members', SAFE_MEMBER_FIELDS)
     .lean();
 }
 
@@ -53,7 +62,7 @@ export async function getTeamDetail(teamId: string) {
   await connectDB();
 
   const team = await Team.findById(teamId)
-    .populate('members')
+    .populate('members', SAFE_MEMBER_FIELDS)
     .lean();
 
   if (!team) {
@@ -67,7 +76,7 @@ export async function getTeamDetail(teamId: string) {
   const submissions = await Submission.find({ teamId })
     .sort({ createdAt: -1 })
     .limit(50)
-    .populate('problemId')
+    .populate('problemId', SAFE_PROBLEM_FIELDS)
     .lean();
 
   return {
@@ -315,6 +324,9 @@ export async function getOrganizerSubmissions() {
   return Submission.find()
     .sort({ createdAt: -1 })
     .limit(100)
-    .populate('teamId problemId')
+    .populate([
+      { path: 'teamId' },
+      { path: 'problemId', select: SAFE_PROBLEM_FIELDS },
+    ])
     .lean();
 }

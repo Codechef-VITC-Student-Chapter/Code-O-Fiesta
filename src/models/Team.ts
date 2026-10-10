@@ -41,7 +41,7 @@ const TeamSchema = new Schema(
   },
 );
 
-TeamSchema.index({ teamCode: 1 }, { unique: true });
+TeamSchema.index({ status: 1 });
 TeamSchema.index({ members: 1 });
 
 export type TeamDocument = InferSchemaType<typeof TeamSchema>;

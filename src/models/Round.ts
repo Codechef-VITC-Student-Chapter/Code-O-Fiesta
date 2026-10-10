@@ -86,7 +86,7 @@ pausedAt: {
   },
 );
 
-RoundSchema.index({ roundNumber: 1 }, { unique: true });
+RoundSchema.index({ status: 1 });
 
 export type RoundDocument = InferSchemaType<typeof RoundSchema>;
 
