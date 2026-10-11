@@ -76,14 +76,14 @@ export async function POST(request: Request) {
 
     // ── Rate Limiting (MongoDB TTL — works across workers, no memory leak) ─
     await connectDB();
-    const rateLimitKey = session.userId;
-    const limited = await isRateLimited(rateLimitKey);
-    if (limited) {
-      return NextResponse.json(
-        { error: `Please wait ${COOLDOWN_SECONDS} seconds before running again.` },
-        { status: 429 }
-      );
-    }
+//     const rateLimitKey = session.userId;
+//     const limited = await isRateLimited(rateLimitKey);
+//     if (limited) {
+//       return NextResponse.json(
+//         { error: `Please wait ${COOLDOWN_SECONDS} seconds before running again.` },
+//         { status: 429 }
+//       );
+//     }
     // ───────────────────────────────────────────────────────────────────────
 
     const body = await request.json();
