@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { createSession } from '../../_lib/auth';
-// import { clearLoginRateLimit, enforceLoginRateLimit } from '../../_lib/rate-limit';
+import { clearLoginRateLimit, enforceLoginRateLimit } from '../../_lib/rate-limit';
 import { errorResponse } from '../../_lib/response';
 import { loginAdmin } from '../../_services/auth.service';
 import { validateAdminLoginInput } from '../../_validators/auth';
@@ -12,10 +12,10 @@ export async function POST(request: Request) {
 
     const input = validateAdminLoginInput(body);
 
-    // await enforceLoginRateLimit(request, input.email);
+    await enforceLoginRateLimit(request, input.email);
 
     const user = await loginAdmin(input);
-    // await clearLoginRateLimit(input.email);
+    await clearLoginRateLimit(input.email);
 
     const token = await createSession({
       userId: user.id,
