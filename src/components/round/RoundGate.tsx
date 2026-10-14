@@ -6,6 +6,7 @@ import { useRoundStatus } from '@/hooks/useRoundStatus';
 import { useTeamResults } from '@/hooks/useTeamResults';
 import LoadingState from '@/components/common/LoadingState';
 import ParticipantLayout from '@/components/layout/ParticipantLayout';
+import PixelCluster from '@/components/brand/PixelCluster';
 
 export interface RoundGateProps {
   roundNumber: number;
@@ -15,8 +16,8 @@ export interface RoundGateProps {
 
 function LockIcon({ colorClass }: { colorClass: string }) {
   return (
-    <div className={`p-4 rounded-full bg-[#121433] border border-[#212659] ${colorClass}`}>
-      <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className={`p-4 rounded-[var(--radius)] border-2 border-ink shadow-hd ${colorClass}`}>
+      <svg className="w-9 h-9" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -47,31 +48,32 @@ function RoundNotActiveScreen({
   const isPaused = status === RoundStatus.PAUSED;
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 text-center py-20 px-4 min-h-[60vh]">
-      <span className="text-xs font-mono font-bold uppercase tracking-widest text-purple-400">
+    <div className="relative flex flex-col items-center justify-center gap-6 text-center py-16 sm:py-20 px-4 min-h-[60vh]">
+      <PixelCluster className="absolute top-4 right-2 sm:right-10 hd-float hidden min-[420px]:block" cell={10} />
+      <span className="hd-kicker text-ink">
         Round {roundNumber}
       </span>
-      <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{roundName}</h1>
+      <h1 className="hd-display text-[clamp(2.25rem,1.2rem+4.5vw,4.5rem)] text-ink break-words max-w-3xl">{roundName}</h1>
 
-      <LockIcon colorClass={isPaused ? 'text-amber-400' : 'text-slate-400'} />
+      <LockIcon colorClass={isPaused ? 'bg-warn-soft text-[#6e4a00]' : 'bg-lilac text-ink'} />
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-mono font-bold uppercase tracking-wide text-white">
-          {isPaused ? 'Round Paused' : 'Round Not Active'}
+        <h2 className="hd-h3 text-ink">
+          {isPaused ? 'Round paused' : 'Round not active'}
         </h2>
-        <p className="text-sm text-slate-400 max-w-md">
+        <p className="text-sm text-charcoal max-w-md leading-relaxed">
           {isPaused
             ? 'The organizers have temporarily paused this round. Please wait for it to resume.'
             : 'This round is currently unavailable. Please wait for the organizers to activate this round.'}
         </p>
       </div>
 
-      <div className="rounded-2xl border border-[#1e224d] bg-[#0d0e24] px-10 py-6 flex flex-col items-center gap-1">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+      <div className="hd-card px-8 sm:px-10 py-6 flex flex-col items-center gap-2">
+        <span className="hd-label text-muted">
           Round Points
         </span>
-        <span className="text-3xl font-mono font-extrabold text-white">
-          {maxScore} <span className="text-base text-slate-400">PTS</span>
+        <span className="hd-display text-5xl text-ink">
+          {maxScore} <span className="font-mono text-base text-muted tracking-normal">PTS</span>
         </span>
       </div>
     </div>
@@ -100,20 +102,21 @@ export default function RoundGate({ roundNumber, roundName, children }: RoundGat
     const score = getRoundScore(roundNumber);
     return (
       <ParticipantLayout>
-        <div className="flex flex-col items-center justify-center gap-6 text-center py-16 px-4">
-          <div className="text-[11px] font-mono text-purple-400 uppercase tracking-widest">
+        <div className="relative flex flex-col items-center justify-center gap-6 text-center py-16 px-4">
+          <PixelCluster className="absolute top-2 right-2 sm:right-10 hd-float hidden min-[420px]:block" color="var(--lilac)" accent="var(--brand)" cell={10} />
+          <div className="hd-kicker text-ink">
             Round {roundNumber} &middot; {roundName}
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Round Completed</h1>
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 px-10 py-8">
-            <div className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest mb-2">
+          <h1 className="hd-display leading-[1.05] text-[clamp(2.25rem,1.2rem+4.5vw,4.5rem)] text-ink">Round <span className="hd-highlight">completed</span></h1>
+          <div className="hd-card-lilac px-8 sm:px-12 py-8">
+            <div className="hd-label text-ink mb-3">
               Points Earned
             </div>
-            <div className="text-5xl font-mono font-extrabold text-white">
-              {scoreLoading ? '—' : score} <span className="text-lg text-slate-400">PTS</span>
+            <div className="hd-display text-6xl text-ink">
+              {scoreLoading ? '—' : score} <span className="font-mono text-lg tracking-normal">PTS</span>
             </div>
           </div>
-          <p className="text-xs text-slate-400 max-w-sm">
+          <p className="text-sm text-charcoal max-w-sm leading-relaxed">
             This round has ended and is no longer accepting submissions. Check the Results page for the full leaderboard.
           </p>
         </div>

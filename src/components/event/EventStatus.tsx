@@ -29,67 +29,67 @@ export default function EventStatus({
     switch (status) {
       case 'ACTIVE':
         return {
-          bg: 'bg-emerald-500/10',
-          border: 'border-emerald-500/30',
-          text: 'text-emerald-400',
-          dot: 'bg-emerald-400 animate-pulse',
+          bg: 'bg-ok-soft',
+          border: 'border-[#0f5b31]',
+          text: 'text-[#0f5b31]',
+          dot: 'bg-ok hd-pulse-dot',
           defaultLabel: 'Active',
         };
       case 'READY':
         return {
-          bg: 'bg-cyan-500/10',
-          border: 'border-cyan-500/30',
-          text: 'text-cyan-400',
-          dot: 'bg-cyan-400',
+          bg: 'bg-lilac',
+          border: 'border-ink',
+          text: 'text-ink',
+          dot: 'bg-ink',
           defaultLabel: 'Ready',
         };
       case 'UPCOMING':
         return {
-          bg: 'bg-blue-500/10',
-          border: 'border-blue-500/30',
-          text: 'text-blue-400',
-          dot: 'bg-blue-400',
+          bg: 'bg-lilac-soft',
+          border: 'border-ink',
+          text: 'text-ink',
+          dot: 'bg-lilac',
           defaultLabel: 'Upcoming',
         };
       case 'PAUSED':
         return {
-          bg: 'bg-amber-500/10',
-          border: 'border-amber-500/30',
-          text: 'text-amber-400',
-          dot: 'bg-amber-400',
+          bg: 'bg-warn-soft',
+          border: 'border-[#6e4a00]',
+          text: 'text-[#6e4a00]',
+          dot: 'bg-warn',
           defaultLabel: 'Paused',
         };
       case 'COMPLETED':
         return {
-          bg: 'bg-purple-500/10',
-          border: 'border-purple-500/30',
-          text: 'text-purple-400',
-          dot: 'bg-purple-400',
+          bg: 'bg-paper',
+          border: 'border-ink',
+          text: 'text-ink',
+          dot: 'bg-ink',
           defaultLabel: 'Completed',
         };
       case 'LOCKED':
         return {
-          bg: 'bg-slate-800',
-          border: 'border-slate-700',
-          text: 'text-slate-400',
-          dot: 'bg-slate-500',
+          bg: 'bg-sand',
+          border: 'border-[var(--border-subtle)]',
+          text: 'text-muted',
+          dot: 'bg-faint',
           defaultLabel: 'Locked',
         };
       case 'EXPIRED':
         return {
-          bg: 'bg-orange-500/10',
-          border: 'border-orange-500/30',
-          text: 'text-orange-400',
-          dot: 'bg-orange-400',
+          bg: 'bg-brand-soft',
+          border: 'border-ink',
+          text: 'text-ink',
+          dot: 'bg-brand',
           defaultLabel: 'Expired',
         };
       case 'ERROR':
       default:
         return {
-          bg: 'bg-rose-500/10',
-          border: 'border-rose-500/30',
-          text: 'text-rose-400',
-          dot: 'bg-rose-400',
+          bg: 'bg-bad-soft',
+          border: 'border-[#8f1a10]',
+          text: 'text-[#8f1a10]',
+          dot: 'bg-bad',
           defaultLabel: 'Error',
         };
     }
@@ -106,9 +106,9 @@ export default function EventStatus({
 
   return (
     <span
-      className={`inline-flex items-center font-mono font-medium rounded-full border ${config.bg} ${config.border} ${config.text} ${sizeClasses} ${className}`}
+      className={`inline-flex items-center font-mono font-bold uppercase tracking-[0.08em] rounded-full border-[1.5px] whitespace-nowrap ${config.bg} ${config.border} ${config.text} ${sizeClasses} ${className}`}
     >
-      <span className={`rounded-full w-1.5 h-1.5 ${config.dot}`} />
+      <span className={`rounded-full w-1.5 h-1.5 shrink-0 ${config.dot}`} aria-hidden="true" />
       {displayLabel}
     </span>
   );
