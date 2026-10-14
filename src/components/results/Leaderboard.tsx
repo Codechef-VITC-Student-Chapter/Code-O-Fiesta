@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PixelCluster from '@/components/brand/PixelCluster';
 
 interface RoundDetail {
   roundNumber: number;
@@ -48,205 +49,234 @@ export default function Leaderboard({
   ].filter(Boolean);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* 1. ESPORTS STANDINGS PODIUM */}
+    <div className="flex flex-col gap-8 text-ink">
+      {/* 1. PODIUM — top three */}
       {searchQuery === '' && standings.length >= 1 && (
-        <div className="flex flex-col md:flex-row items-end justify-center gap-4 sm:gap-6 py-6 border-b border-[var(--border-subtle)]">
-          {podiumOrder.map((team, idx) => {
-            // Determine place from original rank
-            const isFirst = team.rank === 1;
-            const isSecond = team.rank === 2;
-            const isThird = team.rank === 3;
+        <section aria-label="Top three teams" className="relative">
+          <div className="flex items-center justify-between gap-4 mb-5">
+            <span className="hd-kicker text-ink">The podium</span>
+            <PixelCluster cell={8} variant="scatter" className="hidden sm:block" />
+          </div>
+          <div className="flex flex-col md:flex-row md:items-end justify-center gap-5 md:gap-6 pb-2">
+            {podiumOrder.map((team) => {
+              // Determine place from original rank
+              const isFirst = team.rank === 1;
+              const isSecond = team.rank === 2;
+              const isThird = team.rank === 3;
+              const isUserTeam = team.teamId === currentUserTeamId;
 
-            let cardHeight = 'h-48 sm:h-56';
-            let bgStyle = 'bg-slate-950/40 border-slate-700/40';
-            let textGlow = 'text-slate-300';
-            let crownIcon = null;
+              // Mobile stacks 1 → 2 → 3; desktop shows 2 · 1 · 3 podium order.
+              let cardHeight = 'md:h-60 shadow-hd';
+              let bgStyle = 'bg-paper';
+              let rotate = '';
+              let placeLabel = 'Place';
 
-            if (isFirst) {
-              cardHeight = 'h-56 sm:h-64 order-2 md:order-2 z-10 scale-105';
-              bgStyle = 'bg-gradient-to-t from-yellow-950/20 via-yellow-900/10 to-transparent border-yellow-500/40 shadow-[0_0_30px_rgba(234,179,8,0.15)]';
-              textGlow = 'text-yellow-400 font-extrabold drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]';
-              crownIcon = '👑';
-            } else if (isSecond) {
-              cardHeight = 'h-48 sm:h-56 order-1 md:order-1';
-              bgStyle = 'bg-gradient-to-t from-slate-900/20 via-slate-800/10 to-transparent border-slate-400/30';
-              textGlow = 'text-slate-300 font-bold';
-            } else if (isThird) {
-              cardHeight = 'h-44 sm:h-52 order-3 md:order-3';
-              bgStyle = 'bg-gradient-to-t from-amber-900/20 via-amber-950/10 to-transparent border-amber-600/30';
-              textGlow = 'text-amber-500 font-bold';
-            }
+              if (isFirst) {
+                cardHeight = 'md:h-80 order-1 md:order-2 z-10 shadow-hd-lg';
+                bgStyle = 'bg-brand';
+                rotate = 'md:-rotate-1';
+                placeLabel = 'Champion';
+              } else if (isSecond) {
+                cardHeight = 'md:h-68 order-2 md:order-1 shadow-hd';
+                bgStyle = 'bg-lilac';
+                rotate = 'md:rotate-1';
+                placeLabel = 'Runner-up';
+              } else if (isThird) {
+                cardHeight = 'md:h-60 order-3 md:order-3 shadow-hd';
+                bgStyle = 'bg-paper';
+                placeLabel = 'Third place';
+              }
 
-            return (
-              <div
-                key={team.teamId}
-                className={`w-full md:w-52 ${cardHeight} ${bgStyle} border rounded-2xl flex flex-col justify-between items-center p-5 text-center relative overflow-hidden transition-all duration-300 group hover:-translate-y-1`}
-              >
-                {/* Visual rank indicator */}
-                <div className="absolute top-3 left-3 w-6 h-6 rounded-full bg-black/40 border border-white/10 flex items-center justify-center text-[10px] font-mono font-bold text-slate-400">
-                  #{team.rank}
+              return (
+                <div
+                  key={team.teamId}
+                  className={`w-full md:w-64 ${cardHeight} ${bgStyle} ${rotate} border-2 border-ink rounded-[14px] text-ink flex flex-col justify-between p-5 sm:p-6 relative overflow-hidden transition-transform duration-300 hover:-translate-y-1`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="hd-display leading-[0.8] text-[clamp(4.5rem,3rem+5vw,7.5rem)]">
+                      {team.rank}
+                    </span>
+                    <div className="flex flex-col items-end gap-1.5">
+                      <span className={`hd-badge ${isFirst ? 'hd-badge-ink' : ''}`}>{placeLabel}</span>
+                      {isUserTeam && <span className="hd-badge hd-badge-ink">You</span>}
+                    </div>
+                  </div>
+
+                  {isFirst && (
+                    <PixelCluster
+                      className="absolute right-4 top-24 hidden md:block"
+                      color="var(--ink)"
+                      accent="var(--paper)"
+                      cell={9}
+                    />
+                  )}
+
+                  <div className="mt-6 flex flex-col gap-3">
+                    <div className="min-w-0">
+                      <h3 className="hd-h3 truncate">{team.name}</h3>
+                      <span className="hd-label text-charcoal mt-1 block">
+                        {team.completedRoundsCount} stages complete
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-2 border-t-2 border-ink pt-3">
+                      <span className="hd-display text-4xl leading-none">{team.totalScore}</span>
+                      <span className="hd-label text-ink">Points</span>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="mt-4 flex flex-col items-center">
-                  {crownIcon && <span className="text-xl mb-1">{crownIcon}</span>}
-                  <h3 className="text-sm font-mono font-black text-white uppercase tracking-wide truncate max-w-[180px]">
-                    {team.name}
-                  </h3>
-                  <span className="text-[10px] font-mono text-[var(--text-muted)] mt-0.5">
-                    {team.completedRoundsCount} stages complete
-                  </span>
-                </div>
-
-                <div className="mb-2">
-                  <span className={`text-2xl font-mono font-black ${textGlow}`}>
-                    {team.totalScore}
-                  </span>
-                  <span className="text-[9px] font-mono text-[var(--text-secondary)] block">
-                    POINTS
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       {/* 2. SEARCH & CONTROLS */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h2 className="text-base font-mono font-extrabold text-[var(--text-secondary)] uppercase tracking-wider self-start">
-          EVENT STANDINGS
-        </h2>
-        
+      <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
+        <div>
+          <span className="hd-label text-muted">Live rankings</span>
+          <h2 className="hd-h2 mt-1">Event standings</h2>
+        </div>
+
         {/* Search bar */}
-        <div className="w-full sm:w-72 relative">
+        <div className="w-full sm:w-80 relative">
+          <label htmlFor="leaderboard-search" className="sr-only">
+            Search team name
+          </label>
           <input
+            id="leaderboard-search"
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search team name..."
-            className="w-full pl-9 pr-3 py-1.5 bg-[var(--surface-secondary)] border border-[var(--border)] rounded-lg text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[var(--focus)] focus:border-transparent transition-all"
+            className="hd-input pl-10"
           />
-          <svg className="w-4 h-4 text-slate-500 absolute left-3 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
       </div>
 
       {/* 3. LEADERBOARD LIST */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden shadow-lg">
-        {/* Table Header */}
-        <div className="grid grid-cols-12 px-5 py-3 border-b border-[var(--border)] bg-[var(--surface-secondary)] text-[10px] font-mono font-extrabold text-[var(--text-muted)] uppercase tracking-wider select-none">
-          <div className="col-span-2">RANK</div>
-          <div className="col-span-5">TEAM</div>
-          <div className="col-span-3 text-right">COMPLETED STAGES</div>
-          <div className="col-span-2 text-right">TOTAL POINTS</div>
-        </div>
-
-        {/* Table Body */}
+      <div className="hd-card overflow-hidden">
         {filteredStandings.length === 0 ? (
-          <div className="p-8 text-center text-xs font-mono text-[var(--text-muted)]">
-            No teams match your search query.
+          <div className="p-10 text-center">
+            <p className="hd-label text-muted">No teams match your search query.</p>
           </div>
         ) : (
-          <div className="divide-y divide-[var(--border-subtle)]">
-            {filteredStandings.map((team) => {
-              const isUserTeam = team.teamId === currentUserTeamId;
-              const isExpanded = expandedTeamId === team.teamId;
+          <div className="overflow-x-auto">
+            <table className="hd-table min-w-[560px]">
+              <thead>
+                <tr>
+                  <th className="w-24">Rank</th>
+                  <th>Team</th>
+                  <th className="text-right">Completed stages</th>
+                  <th className="text-right">Total points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStandings.map((team) => {
+                  const isUserTeam = team.teamId === currentUserTeamId;
+                  const isExpanded = expandedTeamId === team.teamId;
 
-              return (
-                <div
-                  key={team.teamId}
-                  className={`transition-colors duration-150 ${isUserTeam ? 'bg-purple-900/10' : 'hover:bg-[var(--surface-secondary)]/50'}`}
-                >
-                  {/* Team Summary Row */}
-                  <div
-                    onClick={() => toggleExpand(team.teamId)}
-                    className="grid grid-cols-12 px-5 py-4 items-center text-xs font-mono cursor-pointer select-none"
-                  >
-                    {/* Rank Badge */}
-                    <div className="col-span-2 flex items-center gap-2">
-                      <span className={`w-6 h-6 rounded-md border flex items-center justify-center font-bold ${
-                        team.rank === 1
-                          ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-400'
-                          : team.rank === 2
-                          ? 'bg-slate-400/15 border-slate-400/40 text-slate-300'
-                          : team.rank === 3
-                          ? 'bg-amber-600/15 border-amber-600/40 text-amber-500'
-                          : 'bg-[var(--surface-interactive)] border-[var(--border)] text-[var(--text-secondary)]'
-                      }`}>
-                        {team.rank}
-                      </span>
-                    </div>
+                  return (
+                    <React.Fragment key={team.teamId}>
+                      {/* Team Summary Row */}
+                      <tr
+                        onClick={() => toggleExpand(team.teamId)}
+                        aria-expanded={isExpanded}
+                        className={`cursor-pointer select-none ${isUserTeam ? 'bg-brand-soft' : ''}`}
+                      >
+                        {/* Rank Badge */}
+                        <td className={isUserTeam ? 'border-l-4 border-l-brand' : ''}>
+                          <span
+                            className={`inline-flex items-center justify-center min-w-9 h-9 px-1.5 rounded-lg border-2 border-ink font-mono font-bold text-sm ${
+                              team.rank === 1
+                                ? 'bg-brand text-ink shadow-hd-sm'
+                                : team.rank === 2
+                                ? 'bg-lilac text-ink shadow-hd-sm'
+                                : team.rank === 3
+                                ? 'bg-paper text-ink shadow-hd-sm'
+                                : 'bg-sand text-charcoal'
+                            }`}
+                          >
+                            {team.rank}
+                          </span>
+                        </td>
 
-                    {/* Team Name */}
-                    <div className="col-span-5 flex items-center gap-2">
-                      <span className={`font-bold tracking-wide uppercase ${isUserTeam ? 'text-purple-300' : 'text-white'}`}>
-                        {team.name}
-                      </span>
-                      {isUserTeam && (
-                        <span className="text-[8px] font-extrabold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                          YOU
-                        </span>
+                        {/* Team Name */}
+                        <td>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold uppercase tracking-wide text-ink">{team.name}</span>
+                            {isUserTeam && <span className="hd-badge hd-badge-brand">You</span>}
+                            {team.status === 'DISQUALIFIED' && <span className="hd-badge hd-badge-bad">DSQ</span>}
+                            <svg
+                              aria-hidden="true"
+                              className={`w-3.5 h-3.5 text-muted transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </td>
+
+                        {/* Completed stages count */}
+                        <td className="text-right font-mono text-charcoal">{team.completedRoundsCount} / 3</td>
+
+                        {/* Score */}
+                        <td className="text-right">
+                          <span className="font-display text-xl leading-none text-ink">{team.totalScore}</span>
+                        </td>
+                      </tr>
+
+                      {/* Expanded Breakdown Panel */}
+                      {isExpanded && (
+                        <tr className="bg-cream">
+                          <td colSpan={4}>
+                            <span className="hd-label text-muted block mb-3">Round breakdown</span>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              {team.roundDetails.map((round) => {
+                                const isRoundCompleted = round.status === 'COMPLETED';
+                                return (
+                                  <div
+                                    key={round.roundNumber}
+                                    className="bg-paper border-2 border-ink rounded-[10px] p-3 flex flex-col justify-between"
+                                  >
+                                    <div className="flex justify-between items-center gap-2">
+                                      <span className="text-xs font-bold text-ink truncate max-w-[150px]">
+                                        R{round.roundNumber}: {round.roundName}
+                                      </span>
+                                      <span
+                                        aria-hidden="true"
+                                        className={`w-2.5 h-2.5 shrink-0 rounded-full border border-ink ${isRoundCompleted ? 'bg-ok' : 'bg-warn'}`}
+                                      />
+                                    </div>
+                                    <div className="flex justify-between items-end mt-4 gap-2">
+                                      <span className="font-mono text-[10px] uppercase text-muted">
+                                        Status: {round.status}
+                                      </span>
+                                      <span className="font-mono text-xs font-bold text-ink">{round.score} PTS</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </td>
+                        </tr>
                       )}
-                      {team.status === 'DISQUALIFIED' && (
-                        <span className="text-[8px] font-extrabold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                          DSQ
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Completed stages count */}
-                    <div className="col-span-3 text-right text-[var(--text-secondary)]">
-                      {team.completedRoundsCount} / 3
-                    </div>
-
-                    {/* Score */}
-                    <div className="col-span-2 text-right font-black text-cyan-400 text-sm">
-                      {team.totalScore}
-                    </div>
-                  </div>
-
-                  {/* Expanded Breakdown Panel */}
-                  {isExpanded && (
-                    <div className="px-5 pb-5 pt-1 border-t border-[var(--border-subtle)] bg-[var(--background)]/30">
-                      <div className="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-xl p-4 mt-2">
-                        <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider block mb-3">
-                          ROUND BREAKDOWN
-                        </span>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          {team.roundDetails.map((round) => {
-                            const isRoundCompleted = round.status === 'COMPLETED';
-                            return (
-                              <div
-                                key={round.roundNumber}
-                                className="bg-[var(--surface)] border border-[var(--border-subtle)] p-3 rounded-lg flex flex-col justify-between"
-                              >
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[10px] font-bold text-white truncate max-w-[130px]">
-                                    R{round.roundNumber}: {round.roundName}
-                                  </span>
-                                  <span className={`w-1.5 h-1.5 rounded-full ${isRoundCompleted ? 'bg-[var(--success)]' : 'bg-yellow-400'}`} />
-                                </div>
-                                <div className="flex justify-between items-end mt-4">
-                                  <span className="text-[9px] font-mono text-[var(--text-muted)]">
-                                    STATUS: {round.status}
-                                  </span>
-                                  <span className="text-xs font-mono font-bold text-cyan-400">
-                                    {round.score} PTS
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

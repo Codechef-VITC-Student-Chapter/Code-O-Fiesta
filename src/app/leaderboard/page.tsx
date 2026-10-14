@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import AuthGuard from '@/app/guards/AuthGuard';
 import AdminLayout from '@/components/layout/AdminLayout';
 import AdminLeaderboard from '@/components/admin/AdminLeaderboard';
+import LeaderboardPodium from '@/components/admin/LeaderboardPodium';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import { leaderboardService } from '@/services/leaderboard';
@@ -64,6 +65,7 @@ function LeaderboardContent() {
   return (
     <AdminLayout title="Global Leaderboard" subtitle="Real-time Team Rankings" nav={<AdminNav />}>
       <div className="max-w-6xl mx-auto mt-6">
+        <LeaderboardPodium standings={standings} />
         <AdminLeaderboard standings={standings} />
       </div>
     </AdminLayout>
