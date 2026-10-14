@@ -28,8 +28,8 @@ export default function EventLayout({
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--text-primary)]">
-      {header && <header className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-md">{header}</header>}
+    <div className="min-h-screen flex flex-col bg-cream text-ink overflow-x-clip">
+      {header && <header className="sticky top-0 z-40 w-full border-b-2 border-ink bg-paper">{header}</header>}
       <main className={`flex-1 py-6 flex flex-col ${getMaxWidthClass()} ${className}`}>
         {children}
       </main>

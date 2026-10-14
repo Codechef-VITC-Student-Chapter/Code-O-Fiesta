@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useAllRoundsStatus } from '@/hooks/useRoundStatus';
 import { RoundStatus } from '@/constants/event';
 import VictoryExitModal from '@/components/victory/VictoryExitModal';
+import HackdayLogo from '@/components/brand/HackdayLogo';
 
 export interface ParticipantSidebarProps {
   className?: string;
@@ -13,10 +14,10 @@ export interface ParticipantSidebarProps {
 }
 
 const ROUND_BADGE_STYLES: Record<string, string> = {
-  [RoundStatus.ACTIVE]: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
-  [RoundStatus.PAUSED]: 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
-  [RoundStatus.COMPLETED]: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30',
-  [RoundStatus.UPCOMING]: 'bg-slate-800 text-slate-500 border border-transparent',
+  [RoundStatus.ACTIVE]: 'hd-badge-ok',
+  [RoundStatus.PAUSED]: 'hd-badge-warn',
+  [RoundStatus.COMPLETED]: 'hd-badge-lilac',
+  [RoundStatus.UPCOMING]: 'hd-badge-muted',
 };
 
 const ROUND_BADGE_LABELS: Record<string, string> = {
@@ -38,7 +39,7 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
       label: 'DASHBOARD',
       href: '/dashboard',
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
       ),
@@ -49,7 +50,7 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
       sublabel: 'Path of Fate',
       href: '/round-1/path',
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2 1m0 0l-2-1m2 1v2.5M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1m2 1l2-1m-2 1v-2.5M18 18l-2-1m2 1l2-1m-2 1v-2.5" />
         </svg>
       ),
@@ -60,7 +61,7 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
       sublabel: 'Blind Relay',
       href: '/round-2',
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
         </svg>
       ),
@@ -71,7 +72,7 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
       sublabel: 'Constraint Crucible',
       href: '/round-3',
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       ),
@@ -82,7 +83,7 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
       label: 'VICTORY',
       href: '/arena/victory',
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
         </svg>
       ),
@@ -91,26 +92,31 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
 
   return (
     <aside
-      className={`w-64 bg-[#090a1a] border-r border-[#191c40] flex flex-col justify-between h-full select-none ${className}`}
+      className={`w-64 max-w-full bg-cream border-r-2 border-ink flex flex-col justify-between h-full select-none text-ink ${className}`}
     >
       {/* Top Section: Logo Branding */}
-      <div>
-        <div className="h-16 px-6 border-b border-[#191c40] flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-purple-400 font-mono font-bold text-lg">&lt;/&gt;</span>
-            <span className="font-mono font-extrabold text-sm tracking-wider text-white">
-              CODE<span className="text-purple-400">-</span>O<span className="text-purple-400">-</span>FIESTA<span className="animate-pulse text-purple-400">_</span>
-            </span>
+      <div className="min-h-0 flex flex-col">
+        <div className="h-[var(--topbar-height)] shrink-0 px-5 border-b-2 border-ink bg-paper flex items-center justify-between gap-3">
+          <Link href="/dashboard" aria-label="Hackday dashboard" className="rounded-md">
+            <HackdayLogo size="sm" showOrganizer />
           </Link>
           {onCloseMobile && (
-            <button onClick={onCloseMobile} className="lg:hidden text-slate-400 hover:text-white p-1">
-              ✕
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              aria-label="Close navigation menu"
+              className="lg:hidden hd-icon-btn"
+            >
+              <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 6l12 12M18 6L6 18" />
+              </svg>
             </button>
           )}
         </div>
 
         {/* Navigation Items List */}
-        <nav className="p-3 flex flex-col gap-1.5 overflow-y-auto">
+        <nav aria-label="Participant navigation" className="p-3 pt-4 flex flex-col gap-2 overflow-y-auto">
+          <span className="hd-label text-muted px-2 pb-1">Menu</span>
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -118,20 +124,25 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
                 key={item.id}
                 href={item.href}
                 onClick={onCloseMobile}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-mono font-semibold transition-all group ${
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex items-center justify-between gap-2 px-3 py-2.5 min-h-11 rounded-[var(--radius-sm)] border-2 font-mono text-xs font-bold transition-[transform,box-shadow,background-color] duration-150 group ${
                   isActive
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 border border-purple-400/30'
-                    : 'text-slate-400 hover:bg-[#121433] hover:text-white border border-transparent'
+                    ? 'bg-brand text-ink border-ink shadow-hd'
+                    : 'text-ink border-transparent hover:bg-paper hover:border-ink hover:shadow-hd-sm'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-purple-400'}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`inline-flex items-center justify-center w-7 h-7 shrink-0 rounded-md border-2 border-ink ${
+                      isActive ? 'bg-paper' : 'bg-paper group-hover:bg-lilac'
+                    }`}
+                  >
                     {item.icon}
                   </span>
-                  <div className="flex flex-col">
-                    <span className="tracking-wide">{item.label}</span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="tracking-[0.08em] truncate">{item.label}</span>
                     {item.sublabel && (
-                      <span className={`text-[10px] ${isActive ? 'text-purple-200' : 'text-slate-500'}`}>
+                      <span className={`text-[10px] font-normal truncate ${isActive ? 'text-ink' : 'text-muted'}`}>
                         {item.sublabel}
                       </span>
                     )}
@@ -142,9 +153,7 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
                   const roundNumber = Number(item.id.replace('round-', ''));
                   const status = statusByRoundNumber.get(roundNumber) ?? RoundStatus.UPCOMING;
                   return (
-                    <span
-                      className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${ROUND_BADGE_STYLES[status]}`}
-                    >
+                    <span className={`hd-badge text-[8.5px] px-1.5 shrink-0 ${ROUND_BADGE_STYLES[status]}`}>
                       {ROUND_BADGE_LABELS[status]}
                     </span>
                   );
@@ -156,15 +165,15 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
       </div>
 
       {/* Bottom Section: Connection Telemetry & Exit Arena Action */}
-      <div className="p-4 border-t border-[#191c40] bg-[#070815] flex flex-col gap-3">
+      <div className="p-4 border-t-2 border-ink bg-paper flex flex-col gap-3 shrink-0">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-[#0f5b31]">
+            <span className="hd-dot hd-pulse-dot bg-ok" aria-hidden="true" />
+            <span className="hd-label font-bold">
               SYSTEM STATUS
             </span>
           </div>
-          <p className="text-[11px] font-mono text-slate-500 mt-1">
+          <p className="text-[11px] font-mono text-muted mt-1">
             All systems operational
           </p>
         </div>
@@ -172,9 +181,9 @@ export default function ParticipantSidebar({ className = '', onCloseMobile }: Pa
         <button
           type="button"
           onClick={() => setShowExitModal(true)}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-mono font-bold text-rose-400/90 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 transition-all cursor-pointer group shadow-sm"
+          className="group hd-btn hd-btn-sm hd-btn-block hd-btn-square hover:bg-bad-soft text-[#8f1a10]"
         >
-          <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
           <span>CLOSE ARENA</span>
