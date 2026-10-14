@@ -15,17 +15,17 @@ export default function RelayStatus({ activeTeamMember, timeLeftSeconds }: Relay
   const currentLabel = activeTeamMember === 'member1' ? 'Member 1 (15m)' : 'Member 2 (25m)';
   
   return (
-    <div className="flex flex-col gap-2.5 p-4 rounded-xl bg-[#080814] border border-[#1e1e3a] shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-      <div className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider">
+    <div className="flex flex-col gap-2.5 p-4 rounded-[14px] bg-paper border-2 border-ink shadow-hd-sm text-ink">
+      <div className="hd-label text-muted">
         Relay Configuration
       </div>
-      <div className="flex justify-between items-center mt-1">
-        <span className="text-xs text-slate-400 font-mono">Current Driver:</span>
-        <span className="text-xs font-bold text-white font-mono">{currentLabel}</span>
+      <div className="flex justify-between items-center gap-4 mt-1">
+        <span className="text-xs text-charcoal font-mono">Current Driver:</span>
+        <span className="hd-badge hd-badge-lilac">{currentLabel}</span>
       </div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-slate-400 font-mono">Turn Time Left:</span>
-        <span className={`text-base font-bold font-mono ${timeLeftSeconds < 60 ? 'text-red-400 animate-pulse' : 'text-purple-400'}`}>
+      <div className="flex justify-between items-center gap-4">
+        <span className="text-xs text-charcoal font-mono">Turn Time Left:</span>
+        <span className={`font-mono text-lg font-bold tabular-nums px-2 rounded-md border-2 border-ink ${timeLeftSeconds < 60 ? 'bg-bad-soft text-[#8f1a10] hd-blink' : 'bg-cream text-ink'}`}>
           {formatTime(timeLeftSeconds)}
         </span>
       </div>
