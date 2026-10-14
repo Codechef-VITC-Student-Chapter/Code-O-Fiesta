@@ -52,9 +52,24 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({
       inherit: true,
       rules: [],
       colors: {
-        'editor.background': '#0d0d1f',
-        'editorGutter.background': '#0a0a18',
-        'editor.lineHighlightBackground': '#181832',
+        'editor.background': '#121210',
+        'editorGutter.background': '#0d0d0b',
+        'editor.lineHighlightBackground': '#1f1e1a',
+        'editor.lineHighlightBorder': '#1f1e1a',
+        'editor.selectionBackground': '#ff503447',
+        'editor.inactiveSelectionBackground': '#ff503424',
+        'editorCursor.foreground': '#ff5034',
+        'editorLineNumber.foreground': '#5d5b52',
+        'editorLineNumber.activeForeground': '#f5f3e9',
+        'editorIndentGuide.background1': '#2a2924',
+        'editorWidget.background': '#1a1916',
+        'editorWidget.border': '#3a3830',
+        'editorSuggestWidget.background': '#1a1916',
+        'editorSuggestWidget.border': '#3a3830',
+        'editorSuggestWidget.selectedBackground': '#2e2b25',
+        'scrollbarSlider.background': '#f5f3e926',
+        'scrollbarSlider.hoverBackground': '#f5f3e940',
+        'scrollbarSlider.activeBackground': '#ff503466',
       },
     });
   };
@@ -131,17 +146,17 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({
     <div className="absolute inset-0 w-full h-full">
       <style dangerouslySetInnerHTML={{ __html: `
         .text-decoration-squiggly-red {
-          text-decoration: underline red wavy !important;
+          text-decoration: underline #ff5034 wavy !important;
         }
         .gutter-violation-icon {
-          background: #ef4444;
+          background: #ff5034;
           border-radius: 50%;
           width: 8px !important;
           height: 8px !important;
           margin-left: auto;
           margin-right: auto;
           margin-top: 5px;
-          box-shadow: 0 0 8px #ef4444;
+          box-shadow: 0 0 0 2px #121210;
         }
       `}} />
       <Editor

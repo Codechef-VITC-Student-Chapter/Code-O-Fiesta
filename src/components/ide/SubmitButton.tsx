@@ -49,11 +49,11 @@ export default function SubmitButton({
         onClick={handleOpenConfirm}
         disabled={disabled || isSubmitting || isLocked}
         type="button"
-        className="px-5 py-2 font-mono font-bold text-xs uppercase tracking-wider rounded-lg border transition-all duration-300 flex items-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-purple-400 bg-purple-950/20 border-purple-500/30 hover:border-purple-500/60 hover:shadow-[0_0_12px_rgba(139,92,246,0.25)] focus:outline-none focus:ring-1 focus:ring-purple-500"
+        className="hd-btn hd-btn-primary !min-h-10 !px-4 sm:!px-6"
       >
         {isSubmitting ? (
           <>
-            <svg className="animate-spin h-3.5 w-3.5 text-purple-400" viewBox="0 0 24 24" fill="none">
+            <svg className="animate-spin h-3.5 w-3.5 text-ink" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
@@ -71,7 +71,7 @@ export default function SubmitButton({
 
       {/* Tooltip on hover if locked or disabled */}
       {(isLocked || isSubmitting) && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-[#060612] text-[10px] font-mono text-purple-300 border border-purple-500/20 px-2 py-1 rounded whitespace-nowrap shadow-lg z-50">
+        <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block bg-ink text-[10px] font-mono text-cream border-2 border-ink px-2 py-1 rounded whitespace-nowrap shadow-[2px_2px_0_var(--brand)] z-50">
           {tooltipMsg}
         </div>
       )}

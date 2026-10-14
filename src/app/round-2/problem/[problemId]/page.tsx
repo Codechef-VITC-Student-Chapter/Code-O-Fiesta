@@ -23,13 +23,13 @@ function MemberStatus({
 }) {
   return (
     <div
-      className={`rounded-lg border px-3 py-2 font-mono transition-colors ${active ? 'border-emerald-400/35 bg-emerald-500/10' : 'border-[#2a2d4f] bg-[#0d0e24]'}`}
+      className={`rounded-[var(--radius-sm)] border-2 border-ink px-3 py-2 font-mono transition-colors ${active ? 'bg-ok-soft shadow-hd-sm' : 'bg-sand'}`}
     >
-      <div className="flex items-center gap-2 text-xs font-bold tracking-wide text-white">
-        <span className={`h-2 w-2 rounded-full ${active ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.85)]' : 'bg-slate-500'}`} />
+      <div className="flex items-center gap-2 text-xs font-bold tracking-wide text-ink">
+        <span className={`h-2 w-2 rounded-full border border-ink ${active ? 'bg-ok hd-pulse-dot' : 'bg-faint'}`} />
         {member}
       </div>
-      <div className={`mt-1 pl-4 text-[10px] font-bold tracking-wider ${active ? 'text-emerald-300' : 'text-slate-400'}`}>
+      <div className={`mt-1 pl-4 text-[10px] font-bold tracking-wider ${active ? 'text-[#0f5b31]' : 'text-muted'}`}>
         {status}
       </div>
     </div>
@@ -40,7 +40,7 @@ export default function Round2ProblemPage({ params }: PageProps) {
   const { problemId } = use(params);
   const router = useRouter();
   const { user } = useAuth();
-  
+
   const [roundState, setRoundState] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +74,7 @@ export default function Round2ProblemPage({ params }: PageProps) {
       const st = await problemsService.fetchRoundState(2);
       const nextQNum = st.currentQuestionNumber || 1;
       let nextProblemId = problemId;
-      
+
       const questions = (qsRes as any).questions;
       if (questions && Array.isArray(questions)) {
         const qIdx = nextQNum - 1;
@@ -92,12 +92,12 @@ export default function Round2ProblemPage({ params }: PageProps) {
     }
   };
 
-  if (error) return <div className="p-10 text-red-500">{error}</div>;
-  if (!roundState || !user) return <div className="p-10 text-white">Loading...</div>;
+  if (error) return <div className="min-h-screen bg-cream p-6 sm:p-10"><div className="hd-alert hd-alert-bad max-w-lg text-ink">{error}</div></div>;
+  if (!roundState || !user) return <div className="min-h-screen bg-cream p-6 sm:p-10 hd-label text-charcoal">Loading...</div>;
 
   const currentPhase = roundState.phase;
   const activeMember = roundState.activeMember;
-  
+
   const allowedActions = roundState.allowedActions ?? {};
   const isMyTurn = allowedActions.canEditCode === true;
   const member2IsActive = activeMember === 'MEMBER_2';
@@ -108,18 +108,18 @@ export default function Round2ProblemPage({ params }: PageProps) {
   const msLeft = roundState.phaseEndsAt ? Math.max(0, new Date(roundState.phaseEndsAt).getTime() - Date.now()) : 600000;
 
   return (
-    <div className="flex min-h-screen flex-col overflow-hidden bg-[#0a0a1a] text-white">
-      <header className="relative flex h-32 flex-none items-center border-b border-[#1e224d] bg-[#080814] px-4 sm:px-6">
+    <div className="flex min-h-screen flex-col overflow-hidden bg-cream text-ink">
+      <header className="relative flex h-32 flex-none items-center border-b-2 border-ink bg-paper px-4 sm:px-6">
         <div className="w-full pr-32 sm:pr-40">
           <div className="flex items-center gap-4">
-            <div className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-purple-400">
+            <div className="hd-badge hd-badge-brand">
               Round 2
             </div>
-            <div className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-cyan-300">
+            <div className="hd-label text-charcoal tabular-nums">
               Question {roundState.currentQuestionNumber} / {roundState.totalQuestions}
             </div>
           </div>
-          <h1 className="mt-0.5 font-mono text-sm font-bold tracking-wide text-white">
+          <h1 className="mt-1 font-display text-lg sm:text-xl tracking-[-0.03em] leading-none text-ink">
             Blind Relay Workspace
           </h1>
           <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
@@ -160,11 +160,11 @@ export default function Round2ProblemPage({ params }: PageProps) {
               display: none !important;
             }
             `}</style>
-            <aside className="absolute inset-y-0 left-0 z-20 flex w-[40%] items-center justify-center border-r border-[#1e224d] bg-[#0a0a1a] p-5 text-center">
-              <div className="rounded-xl border border-purple-500/25 bg-[#0d0e24] p-5 font-mono">
-                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-purple-400">Blind Relay</div>
-                <div className="mt-3 text-sm font-bold tracking-wide text-white">{user.teamMember?.replace('_', ' ')}</div>
-                <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-amber-300">
+            <aside className="absolute inset-y-0 left-0 z-20 flex w-[40%] items-center justify-center border-r-2 border-ink bg-cream hd-dots p-3 sm:p-5 text-center">
+              <div className="hd-card p-4 sm:p-6 font-mono max-w-xs">
+                <div className="hd-badge hd-badge-lilac">Blind Relay</div>
+                <div className="mt-3 font-display text-lg tracking-[-0.03em] text-ink break-words">{user.teamMember?.replace('_', ' ')}</div>
+                <div className="mt-3 inline-block rounded-[var(--radius-sm)] bg-warn-soft border-2 border-ink px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-ink">
                   {currentPhase === 'HANDOVER' ? 'HANDOVER — SWITCHING TO MEMBER 2' : roundState.member2Submitted ? 'SUBMITTED — WAITING FOR PHASE END' : 'WAIT FOR YOUR TURN'}
                 </div>
               </div>

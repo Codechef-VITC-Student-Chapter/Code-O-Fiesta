@@ -18,14 +18,14 @@ export default function CustomInput({ value, onChange, exampleInput }: CustomInp
   return (
     <div className="flex flex-col h-full gap-2 relative">
       <div className="flex justify-between items-center px-1">
-        <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">
-          Custom Test Input
+        <span className="hd-label text-muted">
+          Custom test input
         </span>
         {exampleInput && (
           <button
             onClick={handleUseExample}
             type="button"
-            className="text-[10px] font-mono text-purple-400 hover:text-purple-300 underline cursor-pointer"
+            className="font-mono text-[11px] font-bold text-ink underline underline-offset-2 decoration-brand decoration-2 hover:bg-brand-soft px-1.5 py-1 rounded cursor-pointer"
           >
             Use example input
           </button>
@@ -37,9 +37,9 @@ export default function CustomInput({ value, onChange, exampleInput }: CustomInp
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Enter custom input here..."
-          className="w-full h-full min-h-[100px] resize-none font-mono text-xs p-3 rounded-lg bg-[#060612] text-white border border-[var(--border)] outline-none focus:border-purple-500/50 transition-colors"
+          className="w-full h-full min-h-[100px] resize-none font-code text-[13px] leading-relaxed p-3 rounded-[var(--radius-sm)] bg-[#121210] text-cream placeholder:text-faint border-2 border-ink outline-none focus:shadow-[3px_3px_0_var(--brand)] transition-shadow"
         />
-        <div className="absolute bottom-2 right-2.5 text-[9px] font-mono text-[var(--text-muted)] select-none">
+        <div className="absolute bottom-2 right-2.5 text-[10px] font-mono text-faint select-none">
           {value.length} chars
         </div>
       </div>
