@@ -21,9 +21,9 @@ export default function SubmissionResult({
 }: SubmissionResultProps) {
   if (isSubmitting) {
     return (
-      <div className="flex flex-col gap-2 p-4 rounded-xl border border-purple-500/20 bg-purple-950/5 animate-pulse">
+      <div className="flex flex-col gap-2 p-4 rounded-[var(--radius-sm)] border-2 border-ink bg-lilac-soft">
         <SubmissionStatus status="submitting" />
-        <p className="text-[10px] font-mono text-[var(--text-muted)] mt-1">
+        <p className="text-xs font-sans text-charcoal mt-1">
           Evaluating your code against all hidden test cases. Please wait...
         </p>
       </div>
@@ -32,7 +32,7 @@ export default function SubmissionResult({
 
   if (!submitResult) {
     return (
-      <div className="flex items-center justify-center p-6 text-center text-[var(--text-muted)] font-mono text-xs">
+      <div className="flex items-center justify-center p-6 text-center text-muted font-mono text-xs">
         No active submission results. Write code and hit Submit!
       </div>
     );
@@ -51,41 +51,41 @@ export default function SubmissionResult({
   const isAccepted = status === 'accepted';
 
   return (
-    <div className={`p-4 rounded-xl border flex flex-col gap-3 font-mono text-xs ${
-      isAccepted 
-        ? 'border-green-500/20 bg-green-950/5' 
-        : 'border-red-500/20 bg-red-950/5'
+    <div className={`p-4 rounded-[var(--radius-sm)] border-2 border-ink flex flex-col gap-3 font-mono text-xs text-ink ${
+      isAccepted
+        ? 'bg-ok-soft'
+        : 'bg-bad-soft'
     }`}>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <SubmissionStatus status={inlineStatus} />
         {onViewFullVerdict && (
           <button
             onClick={onViewFullVerdict}
             type="button"
-            className="text-[10px] text-purple-400 hover:text-purple-300 font-bold underline cursor-pointer"
+            className="hd-btn hd-btn-sm hd-btn-dark"
           >
             View Full Verdict
           </button>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-4 text-[10px] text-[var(--text-secondary)] mt-1">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-charcoal mt-1">
         <div>
-          Test Cases: <span className="text-white font-bold">{testsPassed} / {totalTests} Passed</span>
+          Test Cases: <span className="text-ink font-bold tabular-nums">{testsPassed} / {totalTests} Passed</span>
         </div>
         {pointsEarned !== undefined && (
           <div>
-            Points Earned: <span className="text-purple-300 font-bold">{pointsEarned}</span>
+            Points Earned: <span className="bg-brand text-ink font-bold px-1 tabular-nums">{pointsEarned}</span>
           </div>
         )}
         {timeMs !== undefined && (
           <div>
-            Time: <span className="text-white font-bold">{timeMs} ms</span>
+            Time: <span className="text-ink font-bold tabular-nums">{timeMs} ms</span>
           </div>
         )}
         {memoryKb !== undefined && (
           <div>
-            Memory: <span className="text-white font-bold">{memoryKb} KB</span>
+            Memory: <span className="text-ink font-bold tabular-nums">{memoryKb} KB</span>
           </div>
         )}
       </div>
