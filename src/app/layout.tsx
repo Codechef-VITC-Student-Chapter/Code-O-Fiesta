@@ -1,25 +1,37 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Archivo_Black, Space_Grotesk, Space_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const archivoBlack = Archivo_Black({
+  variable: "--font-archivo-black",
+  weight: "400",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
 
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Kept for the code editor, which needs a programming-ligature friendly face.
 const jetBrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "VITC CODE-O-FIESTA — Freshers' Edition",
-  description: "Official Competitive Programming Event Platform by CodeChef VIT Chennai Student Chapter",
+  title: "Hackday — CodeChef VIT Chennai",
+  description: "Hackday: the official competitive programming event platform by CodeChef VIT Chennai Student Chapter.",
 };
 
 export default function RootLayout({
@@ -30,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${jetBrainsMono.variable} h-full antialiased dark`}
+      className={`${archivoBlack.variable} ${spaceGrotesk.variable} ${spaceMono.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--text-primary)] font-sans">
         {children}
