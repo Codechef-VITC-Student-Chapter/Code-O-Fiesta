@@ -33,27 +33,27 @@ export default function ConstraintResult({ submitResult, submissionCount }: Cons
   const totalPoints = baseSolvePoints + ouroborosPoints + shortPoints + oneShotPoints;
 
   return (
-    <div className="p-3 bg-[#080814] border border-purple-500/20 rounded-lg max-w-sm font-mono text-[11px] mt-2">
-      <div className="font-bold text-purple-400 mb-1 flex justify-between items-center">
+    <div className="p-3 bg-paper border-2 border-ink rounded-[10px] shadow-hd-sm max-w-sm font-mono text-xs mt-2 text-ink">
+      <div className="font-bold mb-2 pb-2 border-b border-[var(--border-subtle)] flex justify-between items-center gap-3">
         <span>Crucible Score Summary</span>
-        <span className="text-green-400 font-extrabold">+{totalPoints} PTS</span>
+        <span className="hd-badge hd-badge-ok">+{totalPoints} PTS</span>
       </div>
-      <div className="flex flex-col gap-1 text-slate-400 text-[10px]">
+      <div className="flex flex-col gap-1 text-charcoal text-[0.7rem]">
         <div className="flex justify-between">
           <span>Ouroboros:</span>
-          <span className={ouroborosPoints > 0 ? 'text-green-400' : 'text-red-400/50 line-through'}>
+          <span className={ouroborosPoints > 0 ? 'text-[#0f5b31] font-bold' : 'text-muted line-through'}>
             {ouroborosPoints > 0 ? 'Earned' : 'Missed'}
           </span>
         </div>
         <div className="flex justify-between">
           <span>Short & Sweet:</span>
-          <span className={shortPoints > 0 ? 'text-green-400' : 'text-red-400/50 line-through'}>
+          <span className={shortPoints > 0 ? 'text-[#0f5b31] font-bold' : 'text-muted line-through'}>
             {shortPoints > 0 ? 'Earned' : 'Missed'}
           </span>
         </div>
         <div className="flex justify-between">
           <span>One-Shot Wonder:</span>
-          <span className={oneShotPoints > 0 ? 'text-green-400' : 'text-red-400/50 line-through'}>
+          <span className={oneShotPoints > 0 ? 'text-[#0f5b31] font-bold' : 'text-muted line-through'}>
             {oneShotPoints > 0 ? 'Earned' : 'Missed'}
           </span>
         </div>

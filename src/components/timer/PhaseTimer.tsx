@@ -25,7 +25,7 @@ export default function PhaseTimer({
   return (
     <div className={`flex flex-col items-center gap-1.5 ${className}`}>
       {activeMemberLabel && (
-        <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">
+        <span className="hd-badge hd-badge-brand">
           {activeMemberLabel} ACTIVE
         </span>
       )}

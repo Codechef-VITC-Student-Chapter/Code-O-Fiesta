@@ -14,67 +14,51 @@ interface ShapeCardProps {
 
 const shapeConfig = {
   triangle: {
-    label: 'PATH 01',
-    color: 'purple',
-    glow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]',
-    border: 'border-purple-500/60',
-    text: 'text-purple-400',
-    bg: 'bg-purple-500/10',
-    ring: 'ring-purple-500',
+    label: 'Path 01',
+    tile: 'bg-brand',
+    selectedBg: 'bg-brand-soft',
   },
   circle: {
-    label: 'PATH 02',
-    color: 'cyan',
-    glow: 'shadow-[0_0_30px_rgba(6,182,212,0.4)]',
-    border: 'border-cyan-500/60',
-    text: 'text-cyan-400',
-    bg: 'bg-cyan-500/10',
-    ring: 'ring-cyan-500',
+    label: 'Path 02',
+    tile: 'bg-lilac',
+    selectedBg: 'bg-lilac-soft',
   },
   square: {
-    label: 'PATH 03',
-    color: 'yellow',
-    glow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]',
-    border: 'border-yellow-500/60',
-    text: 'text-yellow-400',
-    bg: 'bg-yellow-500/10',
-    ring: 'ring-yellow-500',
+    label: 'Path 03',
+    tile: 'bg-sand',
+    selectedBg: 'bg-sand',
   },
   star: {
-    label: 'PATH 04',
-    color: 'pink',
-    glow: 'shadow-[0_0_30px_rgba(236,72,153,0.4)]',
-    border: 'border-pink-500/60',
-    text: 'text-pink-400',
-    bg: 'bg-pink-500/10',
-    ring: 'ring-pink-500',
+    label: 'Path 04',
+    tile: 'bg-paper',
+    selectedBg: 'bg-brand-soft',
   },
 };
 
 function ShapeIcon({ shape, className }: { shape: ShapeType; className?: string }) {
-  const common = `w-16 h-16 ${className}`;
+  const common = `w-12 h-12 ${className ?? ''}`;
   switch (shape) {
     case 'triangle':
       return (
-        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="6">
+        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="8">
           <polygon points="50,12 90,88 10,88" />
         </svg>
       );
     case 'circle':
       return (
-        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="6">
+        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="8">
           <circle cx="50" cy="50" r="38" />
         </svg>
       );
     case 'square':
       return (
-        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="6">
+        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="8">
           <rect x="18" y="18" width="64" height="64" rx="4" />
         </svg>
       );
     case 'star':
       return (
-        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="5">
+        <svg viewBox="0 0 100 100" className={common} fill="none" stroke="currentColor" strokeWidth="7" strokeLinejoin="round">
           <polygon points="50,8 61,38 94,38 68,58 79,90 50,70 21,90 32,58 6,38 39,38" />
         </svg>
       );
@@ -95,37 +79,38 @@ export default function ShapeCard({
       type="button"
       onClick={onSelect}
       disabled={disabled}
+      aria-pressed={selected}
       className={`
-        relative flex flex-col items-center justify-between
-        w-full min-h-[220px] p-5 rounded-2xl
-        border-2 transition-all duration-300
-        ${config.bg} ${config.border}
-        ${selected ? `${config.glow} ring-2 ${config.ring} scale-[1.03]` : 'hover:scale-[1.02] hover:brightness-110'}
+        group relative flex flex-col items-center justify-between
+        w-full min-h-[220px] p-4 sm:p-5 rounded-[14px] border-2 border-ink text-ink
+        transition-[transform,box-shadow,background-color] duration-200
+        ${selected ? `${config.selectedBg} shadow-hd-lg -translate-x-0.5 -translate-y-0.5 outline outline-[3px] outline-offset-2 outline-brand` : 'bg-paper shadow-hd hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hd-lg'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-        group
       `}
     >
+      {selected && (
+        <span className="absolute -top-3 -right-2 hd-badge hd-badge-ink rotate-3">Selected</span>
+      )}
+
       {/* Shape */}
-      <div className={`${config.text} mt-2 transition-transform duration-300 group-hover:scale-110`}>
+      <div className={`mt-1 flex h-20 w-20 items-center justify-center rounded-xl border-2 border-ink ${config.tile} transition-transform duration-300 group-hover:-rotate-3`}>
         <ShapeIcon shape={shape} />
       </div>
 
       {/* Labels */}
       <div className="flex flex-col items-center gap-1 mt-4">
-        <span className={`text-sm font-bold tracking-widest ${config.text}`}>
+        <span className="hd-display text-xl sm:text-2xl">
           {config.label}
         </span>
-        <span className="text-xs text-slate-400 font-medium">Unknown Domain</span>
+        <span className="text-xs text-charcoal font-medium">Unknown Domain</span>
       </div>
 
       {/* Lock badge */}
-      <div className="mt-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 border border-white/10">
-        <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="mt-4 hd-badge hd-badge-muted">
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
-        <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">
-          Topic hidden
-        </span>
+        Topic hidden
       </div>
     </button>
   );

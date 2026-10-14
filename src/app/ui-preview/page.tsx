@@ -22,36 +22,36 @@ export default function UIPreviewPage() {
   return (
     <div>
       {/* Dev View Switcher Bar */}
-      <div className="bg-[#090a1a] border-b border-[#191c40] px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-        <div className="flex items-center gap-2">
-          <Link href="/" className="text-slate-400 hover:text-white mr-2">← Back to Hook</Link>
-          <span className="text-purple-400 font-bold">UI SHOWCASE:</span>
+      <div className="bg-ink text-cream border-b-2 border-ink px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/" className="text-cream/80 hover:text-brand underline-offset-4 hover:underline mr-2">← Back to Hook</Link>
+          <span className="hd-label text-brand">UI showcase:</span>
           <button
             onClick={() => setActiveLayoutTab('participant')}
-            className={`px-3 py-1 rounded transition-colors ${
+            className={`min-h-9 px-3 py-1 rounded-full border-2 transition-colors ${
               activeLayoutTab === 'participant'
-                ? 'bg-purple-600 text-white font-bold'
-                : 'bg-[#131535] text-slate-300 hover:text-white'
+                ? 'bg-brand text-ink border-ink font-bold'
+                : 'bg-transparent text-cream border-cream/40 hover:border-cream'
             }`}
           >
             Participant Shell
           </button>
           <button
             onClick={() => setActiveLayoutTab('admin')}
-            className={`px-3 py-1 rounded transition-colors ${
+            className={`min-h-9 px-3 py-1 rounded-full border-2 transition-colors ${
               activeLayoutTab === 'admin'
-                ? 'bg-indigo-600 text-white font-bold'
-                : 'bg-[#131535] text-slate-300 hover:text-white'
+                ? 'bg-brand text-ink border-ink font-bold'
+                : 'bg-transparent text-cream border-cream/40 hover:border-cream'
             }`}
           >
             Admin Shell
           </button>
           <button
             onClick={() => setActiveLayoutTab('event')}
-            className={`px-3 py-1 rounded transition-colors ${
+            className={`min-h-9 px-3 py-1 rounded-full border-2 transition-colors ${
               activeLayoutTab === 'event'
-                ? 'bg-cyan-600 text-white font-bold'
-                : 'bg-[#131535] text-slate-300 hover:text-white'
+                ? 'bg-lilac text-ink border-ink font-bold'
+                : 'bg-transparent text-cream border-cream/40 hover:border-cream'
             }`}
           >
             Event Shell
@@ -61,13 +61,13 @@ export default function UIPreviewPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-3 py-1 rounded bg-[#131535] border border-[#1e224d] text-white hover:border-purple-400 transition-colors"
+            className="hd-btn hd-btn-lilac hd-btn-sm"
           >
             Test Modal
           </button>
           <button
             onClick={() => setIsLockOverlayVisible(!isLockOverlayVisible)}
-            className="px-3 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition-colors"
+            className="hd-btn hd-btn-warn hd-btn-sm"
           >
             Toggle Lock Overlay
           </button>
@@ -83,7 +83,7 @@ export default function UIPreviewPage() {
                 actions={
                   <button
                     onClick={() => setIsLockOverlayVisible(false)}
-                    className="px-4 py-2 text-xs font-mono font-bold rounded bg-[#131535] text-white border border-[#1e224d]"
+                    className="hd-btn hd-btn-dark hd-btn-sm"
                   >
                     DISMISS LOCK PREVIEW
                   </button>
@@ -93,18 +93,18 @@ export default function UIPreviewPage() {
 
             <EventProgress />
 
-            <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-bold tracking-tight text-white mb-2">
+            <div className="hd-card p-6">
+              <h2 className="hd-h2 mb-2">
                 Foundation Component Showcase
               </h2>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-sm text-charcoal leading-relaxed">
                 This route displays the shared components and visual language used by all competition routes.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl p-5">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 mb-4">
+              <div className="hd-card p-5">
+                <h3 className="hd-label text-ink mb-4">
                   Event Status Badges
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -119,8 +119,8 @@ export default function UIPreviewPage() {
                 </div>
               </div>
 
-              <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl p-5">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 mb-4">
+              <div className="hd-card p-5">
+                <h3 className="hd-label text-ink mb-4">
                   Team Status Badges
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -144,16 +144,16 @@ export default function UIPreviewPage() {
 
       {activeLayoutTab === 'admin' && (
         <AdminLayout title="Organizer Control Panel" subtitle="Admin Shell Verification">
-          <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl p-6">
-            <h2 className="text-lg font-bold text-white mb-2">Admin Shell Verification</h2>
+          <div className="hd-card p-6">
+            <h2 className="hd-h3 mb-2">Admin Shell Verification</h2>
           </div>
         </AdminLayout>
       )}
 
       {activeLayoutTab === 'event' && (
         <EventLayout>
-          <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl p-6">
-            <h2 className="text-lg font-bold text-white mb-2">Generic Event Shell Verification</h2>
+          <div className="hd-card p-6">
+            <h2 className="hd-h3 mb-2">Generic Event Shell Verification</h2>
           </div>
         </EventLayout>
       )}
@@ -166,7 +166,7 @@ export default function UIPreviewPage() {
         cancelText="Cancel"
         onConfirm={() => setIsModalOpen(false)}
       >
-        <p className="text-xs text-slate-300">Modal component demonstration.</p>
+        <p className="text-sm text-charcoal">Modal component demonstration.</p>
       </Modal>
     </div>
   );

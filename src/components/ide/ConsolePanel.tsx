@@ -60,18 +60,20 @@ export default function ConsolePanel({
   return (
     <div
       style={{ height: `${height}px` }}
-      className="flex flex-col border-t border-[var(--border)] bg-[#060612] relative transition-all duration-75"
+      className="flex flex-col bg-paper text-ink border-2 border-ink rounded-[var(--radius)] overflow-hidden relative transition-all duration-75"
     >
       {/* Resizing Handle on Top Edge */}
       <div
         onMouseDown={startDrag}
-        className="absolute top-0 left-0 right-0 h-1.5 cursor-ns-resize hover:bg-purple-500/40 bg-transparent transition-colors z-20"
+        className="group absolute top-0 left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-brand/40 transition-colors z-20 flex justify-center"
         title="Drag to resize console"
-      />
+      >
+        <span className="mt-[3px] h-[3px] w-10 rounded-full bg-ink/25 group-hover:bg-ink" aria-hidden="true" />
+      </div>
 
       {/* Tabs Header */}
-      <div className="flex items-center justify-between px-4 border-b border-[var(--border-subtle)] bg-[#080814] h-10 select-none">
-        <div className="flex gap-2 h-full items-end">
+      <div className="flex items-center justify-between px-2 sm:px-3 border-b-2 border-ink bg-sand h-11 select-none">
+        <div className="flex gap-1 h-full items-end">
           {(['input', 'output', 'verdict'] as const).map((tab) => {
             const isActive = activeTab === tab;
             const label = tab.charAt(0).toUpperCase() + tab.slice(1);
@@ -81,10 +83,10 @@ export default function ConsolePanel({
                 key={tab}
                 onClick={() => onTabChange(tab)}
                 type="button"
-                className={`px-4 py-2 border-b-2 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+                className={`-mb-[2px] min-h-9 px-3 sm:px-4 py-2 border-2 border-b-0 rounded-t-[var(--radius-sm)] font-mono text-[11px] font-bold uppercase tracking-[0.12em] transition-colors duration-150 cursor-pointer ${
                   isActive
-                    ? 'border-purple-500 text-white shadow-[0_4px_12px_-4px_rgba(139,92,246,0.3)] bg-purple-500/5'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-slate-200'
+                    ? 'border-ink bg-paper text-ink shadow-[inset_0_3px_0_var(--brand)]'
+                    : 'border-transparent text-muted hover:text-ink hover:bg-paper/60'
                 }`}
               >
                 {label}
@@ -95,7 +97,7 @@ export default function ConsolePanel({
       </div>
 
       {/* Content Area */}
-      <div className="flex-grow p-4 overflow-auto font-mono">
+      <div className="flex-grow p-3 sm:p-4 overflow-auto font-mono text-ink">
         {activeTab === 'input' && customInputChild}
         {activeTab === 'output' && outputChild}
         {activeTab === 'verdict' && verdictChild}

@@ -44,11 +44,11 @@ export default function VictoryExitModal({ isOpen, onClose }: VictoryExitModalPr
       variant="danger"
       maxWidth="sm"
     >
-      <div className="flex flex-col gap-2 py-1 font-mono">
-        <p className="text-slate-300 text-xs">
+      <div className="flex flex-col gap-3 py-1">
+        <p className="hd-alert hd-alert-ok text-sm text-ink">
           Your progress has been saved.
         </p>
-        <p className="text-slate-400 text-xs">
+        <p className="text-sm text-charcoal leading-relaxed">
           You will be logged out and returned to the main screen.
         </p>
       </div>

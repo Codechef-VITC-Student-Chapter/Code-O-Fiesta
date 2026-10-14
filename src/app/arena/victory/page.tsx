@@ -8,6 +8,7 @@ import VictoryHero from '@/components/victory/VictoryHero';
 import VictoryScoreStrip from '@/components/victory/VictoryScoreStrip';
 import VictoryTeamCard, { RoundSummary } from '@/components/victory/VictoryTeamCard';
 import VictoryExitModal from '@/components/victory/VictoryExitModal';
+import PixelCluster from '@/components/brand/PixelCluster';
 import useAuth from '@/hooks/useAuth';
 import { useTeamResults } from '@/hooks/useTeamResults';
 import { apiCall } from '@/lib/api';
@@ -112,20 +113,26 @@ function VictoryPageContent() {
         />
 
         {/* 4. Footer CTA */}
-        <div className="mt-8 border-t border-[#1e224d] pt-8 flex flex-col items-center gap-6 text-center">
-          <div className="flex flex-col gap-1.5 font-mono">
-            <p className="text-xs sm:text-sm text-slate-300 font-semibold">
-              Thank you for competing in Code-O-Fiesta 2025.
+        <div className="relative mt-4 hd-card-ink overflow-hidden px-6 py-10 sm:px-10 sm:py-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+          <PixelCluster
+            className="absolute right-4 top-4 sm:right-8 sm:top-6"
+            color="var(--brand)"
+            accent="var(--lilac)"
+            cell={10}
+          />
+          <div className="relative flex flex-col gap-4 max-w-xl">
+            <p className="hd-display text-cream text-[clamp(2rem,1.3rem+3vw,3.5rem)]">
+              Thank you for competing in <span className="hd-highlight text-ink">Hackday 2026</span>.
             </p>
-            <p className="text-[11px] text-slate-500">
-              © 2025 Code-O-Fiesta · VIT Chennai – CodeChef Student Chapter
+            <p className="hd-label text-cream/80">
+              © 2026 Hackday · CodeChef VIT Chennai Student Chapter
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => setShowExitModal(true)}
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-rose-500/40 hover:border-rose-500/80 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg shadow-rose-950/30 transition-all cursor-pointer group"
+            className="relative hd-btn hd-btn-primary hd-btn-lg group self-start md:self-auto"
           >
             <span>Exit Arena</span>
             <svg

@@ -240,22 +240,24 @@ export default function CodingIDE({
 
   if (strictMode && !isBrowserFullscreen) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#0a0a1a] text-white p-6 text-center z-50 fixed inset-0">
-        <div className="mb-6 bg-red-500/10 p-4 rounded-full border border-red-500/30">
-          <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="flex flex-col items-center justify-center h-screen bg-cream hd-dots text-ink p-4 sm:p-6 text-center z-50 fixed inset-0 overflow-y-auto">
+        <div className="hd-card w-full max-w-lg px-6 py-8 sm:px-10 sm:py-10 flex flex-col items-center">
+        <div className="mb-6 bg-warn-soft p-4 rounded-[var(--radius)] border-2 border-ink shadow-hd-sm">
+          <svg className="w-10 h-10 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
-        <h1 className="text-3xl font-bold mb-4">Fullscreen Mode Required</h1>
-        <p className="text-slate-400 max-w-md mb-8">
+        <h1 className="hd-h2 mb-4">Fullscreen mode required</h1>
+        <p className="text-charcoal leading-relaxed max-w-md mb-8">
           This contest requires you to remain in fullscreen mode. Exiting fullscreen, switching tabs, or minimizing the window will be recorded as suspicious activity.
         </p>
         <button
           onClick={requestFullscreen}
-          className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors shadow-lg shadow-purple-500/20"
+          className="hd-btn hd-btn-primary hd-btn-lg"
         >
           Enter Fullscreen to Continue
         </button>
+        </div>
       </div>
     );
   }
@@ -283,13 +285,13 @@ export default function CodingIDE({
 
   if (integrityData?.isDisqualified) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-black text-white flex flex-col items-center justify-center p-6">
-        <div className="bg-[#0a0a1a] border-2 border-red-900 rounded-xl p-10 max-w-lg w-full text-center shadow-[0_0_50px_rgba(220,38,38,0.3)]">
-          <svg className="w-20 h-20 text-red-600 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="fixed inset-0 z-[9999] bg-ink text-ink flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="bg-paper border-2 border-ink rounded-[var(--radius-lg)] p-6 sm:p-10 max-w-lg w-full text-center shadow-[7px_7px_0_var(--bad)]">
+          <svg className="w-16 h-16 sm:w-20 sm:h-20 text-bad mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <h2 className="text-3xl font-black text-red-500 mb-4 tracking-wider uppercase">Team Disqualified</h2>
-          <p className="text-slate-400 text-lg">
+          <h2 className="hd-h1 text-ink mb-4">Team <span className="bg-bad text-paper px-[0.12em]">disqualified</span></h2>
+          <p className="text-charcoal text-base sm:text-lg leading-relaxed">
             Your team has been disqualified from the competition by the administrators due to a violation of the event guidelines.
           </p>
         </div>
@@ -299,20 +301,21 @@ export default function CodingIDE({
 
   return (
     <SubmissionController value={controllerValue}>
-      <StrictModeProtection 
+      <StrictModeProtection
         strictMode={strictMode}
         isSubmissionsLocked={isSubmissionsLocked}
         remainingSwitches={remainingSwitches}
         onCheckStatus={async () => { await mutateIntegrity(); }}
       >
         {/* Main Page Layout Wrapper */}
-        <div className={`flex flex-col h-screen lg:h-screen bg-[#0a0a1a] select-none text-white ${isFullscreen ? 'fixed inset-0 z-50 h-screen' : ''}`}>
-        
+        <div className={`flex flex-col h-screen lg:h-screen bg-cream select-none text-ink font-sans ${isFullscreen ? 'fixed inset-0 z-50 h-screen' : ''}`}>
+
         {/* Relay Round Info Header */}
         {mode === 'relay' && roundConfig && (
-          <div className="flex justify-between items-center px-6 py-2.5 bg-[#080814] border-b border-[var(--border)]">
+          <div className="flex flex-wrap justify-between items-center gap-2 px-3 sm:px-5 py-2 bg-paper border-b-2 border-ink">
             <ActiveMemberIndicator activeTeamMember={roundConfig.activeTeamMember} />
-            <div className="text-[10px] font-mono text-[var(--text-muted)] tracking-wider">
+            <div className="hd-badge hd-badge-lilac">
+              <span className="hd-dot hd-pulse-dot !w-1.5 !h-1.5" aria-hidden="true" />
               BLIND RELAY ACTIVE
             </div>
           </div>
@@ -320,8 +323,8 @@ export default function CodingIDE({
 
         {/* Tab Switch Warning Banner */}
         {strictMode && remainingSwitches <= 2 && !isSubmissionsLocked && (
-          <div className="bg-red-500/20 border-b border-red-500/50 px-6 py-2 flex items-center justify-center gap-2 text-red-200 text-sm font-medium">
-            <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-bad-soft border-b-2 border-ink px-3 sm:px-6 py-2 flex items-center justify-center gap-2 text-ink text-xs sm:text-sm font-medium text-center">
+            <svg className="w-5 h-5 text-bad flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             WARNING: You have {remainingSwitches} tab switch{remainingSwitches === 1 ? '' : 'es'} remaining before your IDE is automatically locked.
@@ -354,9 +357,9 @@ export default function CodingIDE({
                 setConsoleTab('input');
               }}
               submissionHistoryChild={
-                <SubmissionHistory 
-                  history={submissionHistory} 
-                  onRestoreCode={handleRestoreCode} 
+                <SubmissionHistory
+                  history={submissionHistory}
+                  onRestoreCode={handleRestoreCode}
                 />
               }
             />
@@ -365,16 +368,18 @@ export default function CodingIDE({
           {/* Separator Line */}
           <div
             onMouseDown={startSplitDrag}
-            className="hidden lg:block w-1.5 h-full cursor-col-resize hover:bg-purple-500/40 bg-[#080814] border-l border-r border-[var(--border-subtle)] z-20"
+            className="group hidden lg:flex items-center justify-center w-2 h-full cursor-col-resize bg-ink hover:bg-brand transition-colors z-20"
             title="Drag to resize panels"
-          />
+          >
+            <span className="h-10 w-[2px] rounded-full bg-cream/50 group-hover:bg-ink" aria-hidden="true" />
+          </div>
 
           {/* Right panel: Editor & Output console */}
           <div
             style={{ width: isLgScreen ? `${100 - splitWidth}%` : '100%' }}
-            className={`${mobileTab === 'code' ? 'flex' : 'hidden'} lg:flex flex-col h-full overflow-hidden`}
+            className={`${mobileTab === 'code' ? 'flex' : 'hidden'} lg:flex flex-col h-full overflow-hidden bg-cream p-2 sm:p-3 gap-2 sm:gap-3`}
           >
-            <div className="flex flex-col flex-grow relative overflow-hidden">
+            <div className="flex flex-col flex-grow relative overflow-hidden min-h-[220px] bg-[#121210] border-2 border-ink rounded-[var(--radius)] shadow-hd">
               <EditorToolbar
                 language={language}
                 onLanguageChange={setLanguage}
@@ -387,7 +392,7 @@ export default function CodingIDE({
               />
 
               {/* CodeEditor Wrapper with absolute overlay support */}
-              <div className="flex-grow relative overflow-hidden bg-[#0d0d1f]">
+              <div className="flex-grow relative overflow-hidden bg-[#121210]">
                 <CodeEditor
                   key={editorResetKey}
                   value={code}
@@ -399,7 +404,7 @@ export default function CodingIDE({
                   violations={submitResult?.constraintViolations}
                   onCursorChange={(line, col) => setCursorPosition({ line, column: col })}
                 />
-                
+
                 {/* Lock Overlay */}
                 <EditorLockOverlay
                   locked={isLocked}
@@ -437,20 +442,20 @@ export default function CodingIDE({
                     showFullVerdict ? (
                       <div className="flex flex-col h-full">
                         <div className="flex justify-between items-center mb-2 px-1">
-                          <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase">Verdict Details</span>
+                          <span className="hd-label text-muted">Verdict Details</span>
                           <button
                             onClick={() => setShowFullVerdict(false)}
                             type="button"
-                            className="text-[10px] font-mono text-purple-400 hover:text-purple-300 underline cursor-pointer"
+                            className="font-mono text-[11px] font-bold text-ink underline underline-offset-2 decoration-brand decoration-2 hover:bg-brand-soft px-1.5 py-1 rounded cursor-pointer"
                           >
                             Back to Summary
                           </button>
                         </div>
                         <div className="flex-grow overflow-auto">
-                          <VerdictPanel 
-                            submitResult={submitResult} 
-                            submissionCount={submissionHistory.length} 
-                            mode={mode} 
+                          <VerdictPanel
+                            submitResult={submitResult}
+                            submissionCount={submissionHistory.length}
+                            mode={mode}
                           />
                         </div>
                       </div>
@@ -469,11 +474,12 @@ export default function CodingIDE({
             )}
 
             {/* Bottom Action buttons bar (Run / Submit) */}
-            <div className="flex items-center justify-between gap-3 px-4 py-3 bg-[#080814] border-t border-[var(--border)] select-none flex-shrink-0">
+            <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 bg-paper border-2 border-ink rounded-[var(--radius)] select-none flex-shrink-0">
               <button
                 onClick={() => setIsConsoleExpanded(!isConsoleExpanded)}
                 type="button"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1e1e3a] bg-[#0c0d21] text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-purple-600/10 hover:border-purple-500/30 transition-all cursor-pointer select-none"
+                className="hd-btn hd-btn-sm hd-btn-square !min-h-10"
+                aria-expanded={isConsoleExpanded}
               >
                 <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${isConsoleExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
@@ -483,18 +489,18 @@ export default function CodingIDE({
 
               {mode === 'relay' && (
                 <div className="mx-auto">
-                  <RelayStatus 
-                    activeTeamMember={roundConfig?.activeTeamMember || 'member1'} 
-                    timeLeftSeconds={timeLeft} 
+                  <RelayStatus
+                    activeTeamMember={roundConfig?.activeTeamMember || 'member1'}
+                    timeLeftSeconds={timeLeft}
                   />
                 </div>
               )}
 
-              <div className="flex items-center gap-3 ml-auto">
-                <RunButton 
-                  onClick={run} 
+              <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+                <RunButton
+                  onClick={run}
                   disabled={isRunning || isSubmitting || isLocked}
-                  isRunning={isRunning} 
+                  isRunning={isRunning}
                 />
                 <SubmitButton
                   onClick={() => submit(onSolve)}
@@ -508,19 +514,19 @@ export default function CodingIDE({
         </div>
 
         {/* Mobile Tab Switcher Footer */}
-        <div className="flex lg:hidden bg-[#080814] border-t border-[var(--border)] h-12 select-none">
+        <div className="flex lg:hidden bg-paper border-t-2 border-ink h-12 select-none">
           <button
             onClick={() => setMobileTab('problem')}
-            className={`flex-1 flex items-center justify-center font-mono text-xs font-bold uppercase tracking-wider transition-colors ${
-              mobileTab === 'problem' ? 'text-purple-400 bg-purple-500/5' : 'text-slate-500 hover:text-slate-300'
+            className={`flex-1 flex items-center justify-center font-mono text-xs font-bold uppercase tracking-[0.14em] transition-colors border-r-2 border-ink ${
+              mobileTab === 'problem' ? 'text-ink bg-brand' : 'text-muted hover:text-ink hover:bg-sand'
             }`}
           >
             Problem
           </button>
           <button
             onClick={() => setMobileTab('code')}
-            className={`flex-1 flex items-center justify-center font-mono text-xs font-bold uppercase tracking-wider transition-colors ${
-              mobileTab === 'code' ? 'text-purple-400 bg-purple-500/5' : 'text-slate-500 hover:text-slate-300'
+            className={`flex-1 flex items-center justify-center font-mono text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
+              mobileTab === 'code' ? 'text-ink bg-brand' : 'text-muted hover:text-ink hover:bg-sand'
             }`}
           >
             Code

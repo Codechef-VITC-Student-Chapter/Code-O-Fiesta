@@ -88,35 +88,35 @@ export default function ConstraintPanel({ isSolved, submitResult, persistedStatu
 
   return (
     <div className="flex flex-col gap-4 mt-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="hd-h3 text-ink">
           {isSolved ? 'Bonus Summary' : 'Earn these bonuses'}
         </h3>
-        <span className="text-[10px] font-mono text-slate-500 uppercase">
+        <span className="hd-badge hd-badge-ink">
           Crucible Modifiers
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {bonuses.map((b) => {
-          let cardStyles = 'border-cyan-500/20 bg-cyan-950/5 shadow-[0_0_10px_rgba(6,182,212,0.05)]';
+          let cardStyles = 'bg-paper shadow-hd-sm';
           let statusIndicator = (
-            <span className="text-cyan-400 font-mono font-bold text-xs">
+            <span className="hd-badge hd-badge-brand shrink-0">
               +{b.points} PTS
             </span>
           );
 
           if (b.status === 'earned') {
-            cardStyles = 'border-green-500/30 bg-green-950/10 shadow-[0_0_15px_rgba(34,197,94,0.1)]';
+            cardStyles = 'bg-ok-soft shadow-hd-sm';
             statusIndicator = (
-              <span className="text-green-400 font-mono font-bold text-xs flex items-center gap-1">
+              <span className="hd-badge hd-badge-ok shrink-0">
                 ✓ +{b.points} PTS
               </span>
             );
           } else if (b.status === 'missed') {
-            cardStyles = 'border-red-500/20 bg-red-950/5 opacity-60';
+            cardStyles = 'bg-sand opacity-75';
             statusIndicator = (
-              <span className="text-red-400 font-mono font-bold text-xs flex items-center gap-1 line-through">
+              <span className="hd-badge hd-badge-muted shrink-0 line-through">
                 ✗ +{b.points} PTS
               </span>
             );
@@ -125,21 +125,21 @@ export default function ConstraintPanel({ isSolved, submitResult, persistedStatu
           return (
             <div
               key={b.id}
-              className={`flex flex-col justify-between p-4 rounded-xl border transition-all duration-300 hover:-translate-y-0.5 ${cardStyles}`}
+              className={`flex flex-col justify-between p-4 rounded-[14px] border-2 border-ink transition-transform duration-200 hover:-translate-y-0.5 ${cardStyles}`}
             >
               <div>
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-xs font-mono font-bold text-white tracking-wide">
+                <div className="flex justify-between items-start gap-2 mb-2">
+                  <h4 className="text-sm font-bold text-ink">
                     {b.title}
                   </h4>
                   {statusIndicator}
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed font-mono">
+                <p className="text-xs text-charcoal leading-relaxed">
                   {b.description}
                 </p>
               </div>
               {b.status === 'missed' && b.message && (
-                <div className="mt-3 text-[10px] font-mono text-red-400 bg-red-950/20 border border-red-500/10 px-2 py-1 rounded">
+                <div className="mt-3 font-mono text-[0.7rem] text-[#8f1a10] bg-bad-soft border border-[#8f1a10] px-2 py-1 rounded-md">
                   {b.message}
                 </div>
               )}

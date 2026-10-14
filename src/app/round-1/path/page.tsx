@@ -7,100 +7,69 @@ import Path from '@/components/round1/Path';
 import { problemsService } from '@/services/problems';
 
 // Right sidebar content matching the screenshot
+const OVERVIEW = [
+  { label: 'Round Name', value: 'The Path of Fate' },
+  { label: 'Duration', value: '60 Minutes' },
+  { label: 'Problems', value: '3 Problems' },
+  { label: 'Solve Order', value: 'Any Order' },
+  { label: 'Max Score', value: '150 Points' },
+];
+
+const HOW_IT_WORKS = [
+  'Choose one of the four paths.',
+  'Confirm your choice to reveal the domain/topic.',
+  'Solve 3 problems in any order.',
+  'Maximize your score and complete the round!',
+];
+
+const TIPS = [
+  'Think before you choose.',
+  'Every path is unique.',
+  'All paths are challenging.',
+  'Do your best and conquer!',
+];
+
 function Round1Overview() {
   return (
     <div className="flex flex-col gap-5">
       {/* Overview card */}
-      <div className="rounded-2xl border border-[#1e224d] bg-[#0d0e24] p-5">
-        <h3 className="text-xs font-mono tracking-widest text-purple-400 uppercase mb-4">
-          ROUND 1 OVERVIEW
-        </h3>
-        <ul className="space-y-3 text-sm">
-          <li className="flex items-center gap-3">
-            <span className="text-purple-400">📋</span>
-            <div>
-              <div className="text-slate-400 text-xs">Round Name</div>
-              <div className="text-white font-medium">The Path of Fate</div>
+      <div className="hd-card p-5">
+        <h3 className="hd-label text-muted mb-4">ROUND 1 OVERVIEW</h3>
+        <dl className="divide-y divide-[var(--border-subtle)] text-sm">
+          {OVERVIEW.map((item) => (
+            <div key={item.label} className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
+              <dt className="text-charcoal">{item.label}</dt>
+              <dd className="font-mono font-bold text-ink text-right">{item.value}</dd>
             </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-cyan-400">⏱</span>
-            <div>
-              <div className="text-slate-400 text-xs">Duration</div>
-              <div className="text-white font-medium">60 Minutes</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-yellow-400">★</span>
-            <div>
-              <div className="text-slate-400 text-xs">Problems</div>
-              <div className="text-white font-medium">3 Problems</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-pink-400">↕</span>
-            <div>
-              <div className="text-slate-400 text-xs">Solve Order</div>
-              <div className="text-white font-medium">Any Order</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-emerald-400">★</span>
-            <div>
-              <div className="text-slate-400 text-xs">Max Score</div>
-              <div className="text-white font-medium">150 Points</div>
-            </div>
-          </li>
-        </ul>
+          ))}
+        </dl>
       </div>
 
       {/* How it works */}
-      <div className="rounded-2xl border border-[#1e224d] bg-[#0d0e24] p-5">
-        <h3 className="text-xs font-mono tracking-widest text-purple-400 uppercase mb-4">
-          HOW IT WORKS
-        </h3>
-        <ol className="space-y-3 text-sm text-slate-300">
-          <li className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-xs font-bold text-purple-300">1</span>
-            <span>Choose one of the four paths.</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-xs font-bold text-purple-300">2</span>
-            <span>Confirm your choice to reveal the domain/topic.</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-xs font-bold text-purple-300">3</span>
-            <span>Solve 3 problems in any order.</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-xs font-bold text-purple-300">4</span>
-            <span>Maximize your score and complete the round!</span>
-          </li>
+      <div className="hd-card p-5">
+        <h3 className="hd-label text-muted mb-4">HOW IT WORKS</h3>
+        <ol className="space-y-3 text-sm text-ink">
+          {HOW_IT_WORKS.map((step, i) => (
+            <li key={step} className="flex gap-3">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-brand font-mono text-xs font-bold text-ink">
+                {i + 1}
+              </span>
+              <span className="pt-1">{step}</span>
+            </li>
+          ))}
         </ol>
       </div>
 
       {/* Tips */}
-      <div className="rounded-2xl border border-[#1e224d] bg-[#0d0e24] p-5">
-        <h3 className="text-xs font-mono tracking-widest text-purple-400 uppercase mb-3 flex items-center gap-2">
-          <span>💡</span> TIPS
-        </h3>
-        <ul className="space-y-2 text-xs text-slate-400">
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            Think before you choose.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            Every path is unique.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            All paths are challenging.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            Do your best and conquer!
-          </li>
+      <div className="hd-card-flat bg-sand p-5">
+        <h3 className="hd-label text-ink mb-3">TIPS</h3>
+        <ul className="space-y-2 text-sm text-charcoal">
+          {TIPS.map((tip) => (
+            <li key={tip} className="flex items-start gap-2.5">
+              <span className="mt-1.5 h-2 w-2 shrink-0 bg-ink" aria-hidden="true" />
+              {tip}
+            </li>
+          ))}
         </ul>
       </div>
     </div>
@@ -180,10 +149,10 @@ function Round1PathContent() {
   return (
     <ParticipantLayout rightSidebar={<Round1Overview />}>
       {/* Breadcrumb */}
-      <div className="mb-4 text-xs text-slate-500 font-mono">
-        Dashboard <span className="mx-1.5 text-slate-600">›</span>
-        Round 1 <span className="mx-1.5 text-slate-600">›</span>
-        <span className="text-purple-400">Path of Fate</span>
+      <div className="mb-5 hd-label text-muted">
+        Dashboard <span className="mx-1.5" aria-hidden="true">›</span>
+        Round 1 <span className="mx-1.5" aria-hidden="true">›</span>
+        <span className="text-ink">Path of Fate</span>
       </div>
 
       <Path onPathConfirmed={handlePathConfirmed} />

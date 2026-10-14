@@ -13,22 +13,22 @@ export default function SubmissionStatus({ status }: SubmissionStatusProps) {
     switch (status) {
       case 'running':
         return {
-          dotClass: 'bg-cyan-400 animate-ping',
-          containerClass: 'text-cyan-400',
+          dotClass: 'bg-lilac animate-ping',
+          containerClass: 'text-ink',
           label: 'Running...',
           icon: null,
         };
       case 'submitting':
         return {
-          dotClass: 'bg-purple-400 animate-ping',
-          containerClass: 'text-purple-400',
+          dotClass: 'bg-brand animate-ping',
+          containerClass: 'text-ink font-bold',
           label: 'Evaluating...',
           icon: null,
         };
       case 'accepted':
         return {
-          dotClass: 'bg-green-500',
-          containerClass: 'text-green-400 font-bold',
+          dotClass: 'bg-ok',
+          containerClass: 'text-[#0f5b31] font-bold',
           label: 'Accepted',
           icon: (
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,8 +38,8 @@ export default function SubmissionStatus({ status }: SubmissionStatusProps) {
         };
       case 'wrong':
         return {
-          dotClass: 'bg-red-500',
-          containerClass: 'text-red-400 font-bold',
+          dotClass: 'bg-bad',
+          containerClass: 'text-[#8f1a10] font-bold',
           label: 'Wrong Answer',
           icon: (
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,8 +49,8 @@ export default function SubmissionStatus({ status }: SubmissionStatusProps) {
         };
       case 'error':
         return {
-          dotClass: 'bg-amber-500',
-          containerClass: 'text-amber-400 font-bold',
+          dotClass: 'bg-bad',
+          containerClass: 'text-[#8f1a10] font-bold',
           label: 'Error',
           icon: (
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,8 +61,8 @@ export default function SubmissionStatus({ status }: SubmissionStatusProps) {
       case 'idle':
       default:
         return {
-          dotClass: 'bg-slate-500',
-          containerClass: 'text-slate-500',
+          dotClass: 'bg-faint',
+          containerClass: 'text-muted',
           label: 'Ready',
           icon: null,
         };
@@ -72,7 +72,7 @@ export default function SubmissionStatus({ status }: SubmissionStatusProps) {
   const details = getStatusDetails();
 
   return (
-    <div className={`flex items-center gap-2 text-xs font-mono select-none ${details.containerClass}`}>
+    <div className={`flex items-center gap-2 text-xs font-mono uppercase tracking-[0.08em] select-none ${details.containerClass}`}>
       <span className="relative flex h-2 w-2">
         {status === 'running' || status === 'submitting' ? (
           <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${details.dotClass}`}></span>

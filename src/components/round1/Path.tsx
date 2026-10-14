@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import ShapeCard, { ShapeType } from './ShapeCard';
 import ShapeConfirmation from './ShapeConfirmation';
+import PixelCluster from '@/components/brand/PixelCluster';
 
 const PATHS: { id: number; shape: ShapeType }[] = [
   { id: 1, shape: 'triangle' },
@@ -27,54 +28,56 @@ export default function Path({ onPathConfirmed }: PathProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 sm:gap-8">
       {/* Header section */}
-      <div className="relative overflow-hidden rounded-2xl border border-[#1e224d] bg-[#0d0e24]">
-        {/* Background portal image area */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-purple-900/40 to-transparent" />
-          <div className="absolute right-8 top-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-purple-600/20 blur-3xl" />
-        </div>
+      <div className="relative overflow-hidden hd-card p-6 sm:p-8 lg:p-10">
+        <div className="absolute inset-0 hd-dots opacity-60 pointer-events-none" aria-hidden="true" />
 
-        <div className="relative z-10 p-6 lg:p-8 flex flex-col lg:flex-row gap-6 items-start">
-          <div className="flex-1">
-            <div className="text-[11px] font-mono text-purple-400 font-bold tracking-widest uppercase mb-1">
-              ROUND 1
+        <div className="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-10 items-start lg:items-center">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6 flex-1 min-w-0">
+            <span
+              className="hd-display text-[clamp(4.5rem,3rem+6vw,8rem)] leading-[0.8] text-brand shrink-0"
+              aria-hidden="true"
+            >
+              01
+            </span>
+            <div className="min-w-0 sm:pt-1">
+              <span className="hd-kicker text-ink">Round 1</span>
+              <h1 className="hd-h1 text-ink mt-3 mb-4">
+                The <span className="hd-highlight">Path</span> of Fate
+              </h1>
+              <p className="text-sm sm:text-base text-charcoal max-w-xl leading-relaxed">
+                Four mysterious paths lie ahead. Each path leads to a different domain.
+                Choose wisely — once confirmed, your path is locked.
+              </p>
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight mb-3">
-              THE PATH OF FATE
-            </h1>
-            <p className="text-sm text-slate-300 max-w-xl leading-relaxed">
-              Four mysterious paths lie ahead. Each path leads to a different domain.
-              Choose wisely — once confirmed, your path is locked.
-            </p>
           </div>
 
-          {/* Decorative portal illustration */}
-          <div className="hidden lg:flex items-center justify-center w-56 h-40 relative">
-            <div className="absolute inset-0 rounded-2xl border-2 border-purple-500/40 bg-gradient-to-b from-purple-900/30 to-transparent" />
-            <div className="w-24 h-32 rounded-t-full border-2 border-purple-400/60 bg-purple-950/50 relative overflow-hidden">
-              <div className="absolute inset-2 rounded-t-full border border-purple-300/30" />
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-10 bg-purple-400/20 rounded-t-full" />
+          {/* Decorative sticker */}
+          <div className="hidden lg:flex relative w-56 h-40 items-center justify-center shrink-0" aria-hidden="true">
+            <PixelCluster className="absolute -top-2 right-0 hd-float" cell={12} />
+            <div className="hd-card-lilac px-4 py-3 -rotate-6">
+              <p className="font-mono text-xs uppercase tracking-[0.1em] leading-relaxed text-ink">
+                4 paths
+                <br />
+                1 domain each
+                <br />
+                No take-backs
+              </p>
             </div>
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-2 bg-purple-500/30 blur-sm rounded-full" />
           </div>
         </div>
       </div>
 
       {/* Choose your path */}
-      <div className="text-center">
-        <div className="inline-flex items-center gap-3">
-          <div className="h-px w-12 bg-gradient-to-r from-transparent to-purple-500/50" />
-          <span className="text-xs font-mono tracking-[0.2em] text-purple-300 uppercase">
-            CHOOSE YOUR PATH
-          </span>
-          <div className="h-px w-12 bg-gradient-to-l from-transparent to-purple-500/50" />
-        </div>
+      <div className="flex items-center gap-3">
+        <span className="h-[2px] flex-1 bg-ink" aria-hidden="true" />
+        <span className="hd-label text-ink">CHOOSE YOUR PATH</span>
+        <span className="h-[2px] flex-1 bg-ink" aria-hidden="true" />
       </div>
 
       {/* Shape cards grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {PATHS.map((path) => (
           <ShapeCard
             key={path.id}
@@ -87,35 +90,27 @@ export default function Path({ onPathConfirmed }: PathProps) {
       </div>
 
       {/* Warning banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3">
-        <div className="mt-0.5 text-cyan-400">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-          </svg>
-        </div>
-        <p className="text-xs text-slate-300 leading-relaxed">
+      <div className="hd-alert hd-alert-info">
+        <svg className="w-4 h-4 mt-0.5 shrink-0 text-ink" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+        </svg>
+        <p className="text-sm text-ink leading-relaxed">
           Once you confirm your path, the domain will be revealed and you cannot change it.
         </p>
       </div>
 
       {/* Confirm button */}
-      <div className="flex flex-col items-center gap-2 pt-2">
+      <div className="flex flex-col items-center gap-3 pt-2">
         <button
           type="button"
           disabled={selectedPath === null}
           onClick={() => setShowConfirm(true)}
-          className={`
-            relative px-10 py-3.5 rounded-xl font-bold text-sm tracking-wide
-            transition-all duration-300
-            ${selectedPath !== null
-              ? 'bg-gradient-to-r from-purple-600 to-violet-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.45)] hover:shadow-[0_0_35px_rgba(139,92,246,0.6)] hover:scale-[1.02]'
-              : 'bg-[#1a1d42] text-slate-500 cursor-not-allowed'}
-          `}
+          className="hd-btn hd-btn-primary hd-btn-lg w-full sm:w-auto"
         >
           CONFIRM YOUR PATH →
         </button>
-        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex items-center gap-1.5 hd-label text-muted text-center">
+          <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
           Your choice will be final and locked

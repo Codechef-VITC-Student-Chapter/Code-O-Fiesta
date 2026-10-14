@@ -49,61 +49,56 @@ const RULES: Rule[] = [
 
 export default function RulesAndRegulations() {
   return (
-    <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl p-5 sm:p-6 shadow-sm">
-      <div className="flex items-center justify-between border-b border-[#141738] pb-3 mb-4">
-        <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-          <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          Rules &amp; Regulations
-        </h2>
+    <section className="hd-card p-5 sm:p-8">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-ink pb-4 mb-5">
+        <div className="flex flex-col gap-2">
+          <span className="hd-kicker text-ink">Read before you start</span>
+          <h2 className="hd-h2 flex items-center gap-3">
+            <span className="inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-[var(--radius-sm)] bg-lilac border-2 border-ink">
+              <svg className="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </span>
+            Rules &amp; regulations
+          </h2>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <ol className="flex flex-col gap-3">
         {RULES.map((rule, index) => (
-          <div
+          <li
             key={rule.title}
-            className={`flex items-start gap-3 p-3 rounded-lg border ${
-              rule.critical
-                ? 'bg-rose-500/5 border-rose-500/30'
-                : 'bg-[#121433] border-[#1e224d]'
+            className={`flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-[var(--radius-sm)] border-2 ${
+              rule.critical ? 'bg-bad-soft border-ink' : 'bg-cream border-[var(--border-subtle)]'
             }`}
           >
             <span
-              className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold border ${
-                rule.critical
-                  ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
-                  : 'bg-purple-500/10 border-purple-500/30 text-purple-300'
+              className={`shrink-0 w-8 h-8 rounded-[var(--radius-sm)] flex items-center justify-center text-xs font-mono font-bold border-2 border-ink ${
+                rule.critical ? 'bg-brand text-ink' : 'bg-paper text-ink'
               }`}
             >
               {String(index + 1).padStart(2, '0')}
             </span>
 
-            <div className="flex flex-col gap-0.5 min-w-0">
+            <div className="flex flex-col gap-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className={`text-xs font-mono font-bold ${rule.critical ? 'text-rose-300' : 'text-white'}`}>
-                  {rule.title}
-                </span>
-                {rule.critical && (
-                  <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/30 px-1.5 py-0.5 rounded">
-                    Zero Tolerance
-                  </span>
-                )}
+                <span className="text-sm font-bold text-ink">{rule.title}</span>
+                {rule.critical && <span className="hd-badge hd-badge-bad">Zero Tolerance</span>}
               </div>
-              <span className="text-[11px] text-slate-400 leading-relaxed">{rule.description}</span>
+              <span className="text-[13px] text-charcoal leading-relaxed">{rule.description}</span>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
 
-      <p className="mt-4 text-[10px] font-mono text-slate-500 italic leading-relaxed border-t border-[#141738] pt-3">
+      <p className="mt-5 text-[11px] font-mono text-muted italic leading-relaxed border-t border-[var(--border-subtle)] pt-4">
         These rules are currently sample rules and may be updated by the organizers before the event.
       </p>
-    </div>
+    </section>
   );
 }

@@ -25,12 +25,12 @@ export default function TeamMembersCard({
   const onlineCount = members.filter((m) => m.isOnline).length;
 
   return (
-    <div className={`bg-[#0d0e24] border border-[#1e224d] rounded-xl p-5 shadow-sm flex flex-col gap-4 ${className}`}>
-      <div className="flex items-center justify-between border-b border-[#141738] pb-3">
-        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-          Team Members
+    <div className={`hd-card p-5 flex flex-col gap-4 ${className}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ink pb-3">
+        <h3 className="hd-h3">
+          Team members
         </h3>
-        <span className="text-[10px] font-mono font-bold text-emerald-400">
+        <span className="hd-badge hd-badge-ok">
           {onlineCount} / {members.length} ONLINE
         </span>
       </div>
@@ -39,24 +39,24 @@ export default function TeamMembersCard({
         {members.map((member) => (
           <div
             key={member.id}
-            className="flex items-center justify-between p-3 rounded-lg bg-[#121433] border border-[#1e224d]"
+            className="flex items-center justify-between gap-3 p-3 rounded-[var(--radius-sm)] bg-cream border-2 border-[var(--border-subtle)]"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#1b1e4a] border border-purple-500/30 flex items-center justify-center text-slate-300 text-xs font-mono">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 shrink-0 rounded-full bg-lilac border-2 border-ink flex items-center justify-center text-ink text-xs font-mono" aria-hidden="true">
                 👤
               </div>
-              <span className="text-xs font-mono font-semibold text-white">{member.name}</span>
+              <span className="text-sm font-semibold text-ink truncate">{member.name}</span>
             </div>
 
-            <span className="text-[10px] font-mono font-bold text-emerald-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="hd-badge hd-badge-ok shrink-0">
+              <span className="hd-dot hd-pulse-dot" aria-hidden="true" />
               ONLINE
             </span>
           </div>
         ))}
       </div>
 
-      <button className="w-full mt-1 py-2 text-[11px] font-mono font-bold text-purple-300 hover:text-white rounded-lg bg-[#121433] hover:bg-[#1a1d42] border border-[#1e224d] transition-colors text-center">
+      <button type="button" className="hd-btn hd-btn-sm hd-btn-block mt-1">
         VIEW TEAM DETAILS →
       </button>
     </div>

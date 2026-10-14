@@ -27,29 +27,29 @@ export default function ProblemNavigation({
   const dashboardLabel = roundNumber === 3 ? 'All Problems (Round 3 Dashboard)' : 'All Problems (Path Dashboard)';
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3 border-t border-[var(--border)] bg-[#080814] select-none font-mono">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-2 px-3 sm:px-4 py-3 border-t-2 border-ink bg-sand select-none font-mono">
+      <div className="flex items-center justify-between gap-2">
         {/* Previous Button */}
         {prevProblemId && onNavigate ? (
           <button
             onClick={() => onNavigate(prevProblemId)}
             type="button"
-            className="px-3 py-1.5 text-xs text-purple-400 hover:text-purple-300 bg-[#0a0a18] border border-purple-500/20 hover:border-purple-500/40 rounded transition-colors cursor-pointer"
+            className="hd-btn hd-btn-sm hd-btn-square !min-h-10 !px-3"
           >
-            ← Previous Problem
+            ← <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
           </button>
         ) : (
           <button
             disabled
             type="button"
-            className="px-3 py-1.5 text-xs text-slate-600 bg-[#0a0a18]/40 border border-[var(--border-subtle)] rounded cursor-not-allowed"
+            className="hd-btn hd-btn-sm hd-btn-square !min-h-10 !px-3"
           >
-            ← Previous Problem
+            ← <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
           </button>
         )}
 
         {/* Counter */}
-        <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold">
+        <span className="hd-label text-charcoal text-center tabular-nums">
           Problem {currentProblemIndex} of {totalProblems}
         </span>
 
@@ -58,17 +58,17 @@ export default function ProblemNavigation({
           <button
             onClick={() => onNavigate(nextProblemId)}
             type="button"
-            className="px-3 py-1.5 text-xs text-purple-400 hover:text-purple-300 bg-[#0a0a18] border border-purple-500/20 hover:border-purple-500/40 rounded transition-colors cursor-pointer"
+            className="hd-btn hd-btn-sm hd-btn-square !min-h-10 !px-3"
           >
-            Next Problem →
+            Next<span className="hidden sm:inline">&nbsp;Problem</span> →
           </button>
         ) : (
           <button
             disabled
             type="button"
-            className="px-3 py-1.5 text-xs text-slate-600 bg-[#0a0a18]/40 border border-[var(--border-subtle)] rounded cursor-not-allowed"
+            className="hd-btn hd-btn-sm hd-btn-square !min-h-10 !px-3"
           >
-            Next Problem →
+            Next<span className="hidden sm:inline">&nbsp;Problem</span> →
           </button>
         )}
       </div>
@@ -77,7 +77,7 @@ export default function ProblemNavigation({
       <div className="flex justify-center mt-1">
         <Link
           href={dashboardHref}
-          className="text-[10px] font-bold text-[var(--text-secondary)] hover:text-purple-400 uppercase tracking-wider underline transition-colors"
+          className="hd-label text-ink underline underline-offset-2 decoration-brand decoration-2 hover:bg-brand-soft px-1.5 py-1 rounded transition-colors"
         >
           {dashboardLabel}
         </Link>

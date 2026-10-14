@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import FinalScore from './FinalScore';
+import PixelCluster from '@/components/brand/PixelCluster';
+import Sticker from '@/components/brand/Sticker';
 
 interface RoundBreakdown {
   roundNumber: number;
@@ -29,38 +31,37 @@ export default function CompletionScreen({
   roundBreakdowns,
 }: CompletionScreenProps) {
   return (
-    <div className="flex flex-col gap-8 max-w-4xl mx-auto py-4">
-      {/* Cinematic Esports Header */}
-      <div className="text-center relative py-8 px-4 bg-gradient-to-b from-purple-900/10 via-indigo-950/10 to-transparent border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl">
-        <div className="absolute inset-0 bg-[#0d0e24]/40 backdrop-blur-sm z-0" />
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl" />
+    <div className="flex flex-col gap-8 max-w-4xl mx-auto py-4 text-ink">
+      {/* Poster header */}
+      <div className="relative hd-card overflow-hidden px-5 py-10 sm:px-10 sm:py-14">
+        <div className="absolute inset-0 hd-dots opacity-50 pointer-events-none" aria-hidden="true" />
+        <PixelCluster className="absolute right-4 top-4 sm:right-8 sm:top-6 hd-float" cell={12} />
+        <PixelCluster
+          className="absolute left-4 bottom-4 hidden sm:block"
+          variant="block"
+          color="var(--lilac)"
+          accent="var(--brand)"
+          cell={9}
+        />
 
-        <div className="relative z-10 flex flex-col items-center gap-3">
-          {/* Trophy Graphic */}
-          <div className="w-16 h-16 bg-gradient-to-b from-yellow-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg relative animate-bounce [animation-duration:3s]">
-            <div className="absolute inset-0 bg-yellow-400/30 rounded-2xl blur-lg animate-pulse" />
-            <svg className="w-9 h-9 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-            </svg>
-          </div>
-
-          <div className="flex flex-col gap-1 mt-2">
-            <span className="text-xs font-mono font-black text-purple-400 uppercase tracking-widest animate-pulse">
-              — EVENT COMPLETE —
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-black font-mono tracking-tighter text-white bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-cyan-300">
-              CODE-O-FIESTA
-            </h1>
-          </div>
+        <div className="relative z-10 flex flex-col items-start gap-5">
+          <span className="hd-kicker text-ink">Event complete</span>
+          <h1 className="hd-display text-[clamp(3rem,1.6rem+6vw,6.5rem)]">
+            That&apos;s a wrap,
+            <br />
+            <span className="hd-highlight">Hackday</span>
+          </h1>
 
           {/* Team profile summary */}
-          <div className="mt-4 px-6 py-2.5 rounded-full bg-[var(--surface-secondary)] border border-[var(--border)] text-xs font-mono">
-            <span className="text-[var(--text-secondary)]">TEAM: </span>
-            <strong className="text-white font-extrabold tracking-wide uppercase">{teamName}</strong>
-            <span className="text-[var(--text-muted)] mx-2">|</span>
-            <span className="text-[var(--text-secondary)]">MEMBERS: </span>
-            <strong className="text-white font-extrabold uppercase">{members.join(', ')}</strong>
-          </div>
+          <Sticker tone="lilac" rotate={-2} className="mt-2 max-w-full">
+            <p className="font-mono text-xs uppercase tracking-[0.08em] leading-relaxed">
+              <span className="text-charcoal">Team: </span>
+              <strong className="font-bold text-ink">{teamName}</strong>
+              <span className="mx-2 text-charcoal" aria-hidden="true">/</span>
+              <span className="text-charcoal">Members: </span>
+              <strong className="font-bold text-ink">{members.join(', ')}</strong>
+            </p>
+          </Sticker>
         </div>
       </div>
 

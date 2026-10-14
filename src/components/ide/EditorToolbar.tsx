@@ -34,27 +34,27 @@ export default function EditorToolbar({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 bg-[#080814] border-b border-[var(--border)]">
+    <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 bg-paper text-ink border-b-2 border-ink">
       {/* Left side actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <LanguageSelector currentLanguage={language} onChange={onLanguageChange} />
 
         {/* Font size stepper */}
-        <div className="flex items-center bg-[#0a0a18] border border-[var(--border)] rounded-full px-2 py-0.5">
+        <div className="flex items-center h-9 bg-paper border-2 border-ink rounded-full px-1">
           <button
             onClick={() => onFontSizeChange(Math.max(12, fontSize - 1))}
-            className="text-[var(--text-secondary)] hover:text-white px-1.5 py-0.5 text-xs font-mono disabled:opacity-30"
+            className="h-7 min-w-7 px-1.5 rounded-full text-ink hover:bg-lilac-soft text-xs font-mono font-bold disabled:opacity-30 disabled:hover:bg-transparent"
             disabled={fontSize <= 12}
             title="Decrease Font Size"
           >
             A-
           </button>
-          <span className="text-[10px] font-mono text-[var(--text-muted)] font-bold px-1 select-none">
+          <span className="text-[11px] font-mono text-charcoal font-bold px-1 select-none tabular-nums">
             {fontSize}px
           </span>
           <button
             onClick={() => onFontSizeChange(Math.min(20, fontSize + 1))}
-            className="text-[var(--text-secondary)] hover:text-white px-1.5 py-0.5 text-xs font-mono disabled:opacity-30"
+            className="h-7 min-w-7 px-1.5 rounded-full text-ink hover:bg-lilac-soft text-xs font-mono font-bold disabled:opacity-30 disabled:hover:bg-transparent"
             disabled={fontSize >= 20}
             title="Increase Font Size"
           >
@@ -65,35 +65,35 @@ export default function EditorToolbar({
         {/* Reset code */}
         <button
           onClick={() => setIsResetOpen(true)}
-          className="px-3 py-1 bg-[#0a0a18] border border-[var(--border)] hover:border-red-500/30 hover:text-red-400 rounded-full font-mono text-[10px] text-[var(--text-secondary)] transition-all duration-300"
+          className="hd-btn hd-btn-sm !min-h-9 !shadow-none hover:!bg-bad-soft hover:!text-[#8f1a10]"
         >
           Reset Code
         </button>
       </div>
 
       {/* Right side status / hint */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {mode === 'constraint' && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-950/20 border border-cyan-500/20 text-[10px] font-mono font-bold text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)] animate-pulse">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
+          <div className="hd-badge hd-badge-lilac">
+            <span className="hd-dot hd-pulse-dot !w-1.5 !h-1.5"></span>
             CONSTRAINTS ACTIVE
           </div>
         )}
 
         {/* Shortcuts Hints (hidden on smaller displays) */}
-        <div className="hidden xl:flex items-center gap-3 text-[10px] font-mono text-[var(--text-muted)]">
+        <div className="hidden xl:flex items-center gap-3 text-[10px] font-mono text-muted">
           <div>
-            <kbd className="px-1.5 py-0.5 bg-[#0a0a18] border border-[var(--border)] rounded text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-[#0a0a18] border border-[var(--border)] rounded text-slate-400">Enter</kbd> Run
+            <kbd className="px-1.5 py-0.5 bg-sand border border-ink/30 border-b-2 rounded text-ink">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-sand border border-ink/30 border-b-2 rounded text-ink">Enter</kbd> Run
           </div>
           <div>
-            <kbd className="px-1.5 py-0.5 bg-[#0a0a18] border border-[var(--border)] rounded text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-[#0a0a18] border border-[var(--border)] rounded text-slate-400">Shift</kbd> + <kbd className="px-1.5 py-0.5 bg-[#0a0a18] border border-[var(--border)] rounded text-slate-400">Enter</kbd> Submit
+            <kbd className="px-1.5 py-0.5 bg-sand border border-ink/30 border-b-2 rounded text-ink">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-sand border border-ink/30 border-b-2 rounded text-ink">Shift</kbd> + <kbd className="px-1.5 py-0.5 bg-sand border border-ink/30 border-b-2 rounded text-ink">Enter</kbd> Submit
           </div>
         </div>
 
         {/* Fullscreen Toggle */}
         <button
           onClick={onToggleFullscreen}
-          className="p-1 rounded hover:bg-slate-800/40 text-[var(--text-secondary)] hover:text-white transition-colors"
+          className="hd-icon-btn !w-9 !h-9"
           title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Editor'}
         >
           {isFullscreen ? (

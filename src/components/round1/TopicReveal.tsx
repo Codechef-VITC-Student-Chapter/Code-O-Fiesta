@@ -11,11 +11,11 @@ export interface TopicRevealProps {
   onContinue: () => void;
 }
 
-const shapeMeta: Record<ShapeType, { label: string; color: string; glow: string }> = {
-  triangle: { label: 'Triangle', color: 'text-purple-400', glow: 'shadow-[0_0_40px_rgba(168,85,247,0.5)]' },
-  circle:   { label: 'Circle',   color: 'text-cyan-400',   glow: 'shadow-[0_0_40px_rgba(6,182,212,0.5)]' },
-  square:   { label: 'Square',   color: 'text-yellow-400', glow: 'shadow-[0_0_40px_rgba(234,179,8,0.5)]' },
-  star:     { label: 'Star',     color: 'text-pink-400',   glow: 'shadow-[0_0_40px_rgba(236,72,153,0.5)]' },
+const shapeMeta: Record<ShapeType, { label: string; tile: string }> = {
+  triangle: { label: 'Triangle', tile: 'bg-brand' },
+  circle:   { label: 'Circle',   tile: 'bg-lilac' },
+  square:   { label: 'Square',   tile: 'bg-sand' },
+  star:     { label: 'Star',     tile: 'bg-paper' },
 };
 
 export default function TopicReveal({
@@ -39,71 +39,68 @@ export default function TopicReveal({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#05060e]/95 backdrop-blur-md">
-      <div className="relative w-full max-w-lg">
-        {/* Glow orb */}
-        <div className={`absolute -inset-8 rounded-full blur-3xl opacity-40 transition-opacity duration-1000 ${phase !== 'locked' ? 'opacity-60' : 'opacity-20'} bg-purple-600`} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/70 overflow-y-auto">
+      <div className="relative w-full max-w-lg my-auto">
+        <div className="relative hd-card shadow-hd-lg p-6 sm:p-8 text-center overflow-hidden">
+          <div className="absolute inset-0 hd-dots opacity-50 pointer-events-none" aria-hidden="true" />
 
-        <div className="relative rounded-2xl border border-[#1e224d] bg-[#0d0e24] p-8 text-center overflow-hidden">
-          {/* Header */}
-          <div className="text-[11px] font-mono tracking-[0.25em] text-purple-400 uppercase mb-6">
-            Path {pathId.toString().padStart(2, '0')} · {meta.label}
+          <div className="relative">
+            {/* Header */}
+            <div className="mb-6 flex justify-center">
+              <span className="hd-badge hd-badge-ink">
+                Path {pathId.toString().padStart(2, '0')} · {meta.label}
+              </span>
+            </div>
+
+            {/* Locked / Revealing state */}
+            {phase !== 'revealed' && (
+              <div className="flex flex-col items-center gap-4 py-8">
+                <div className={`
+                  w-24 h-24 rounded-xl border-2 border-dashed border-ink bg-sand
+                  flex items-center justify-center
+                  transition-all duration-700
+                  ${phase === 'revealing' ? 'scale-110 border-solid bg-brand rotate-12 shadow-hd' : ''}
+                `}>
+                  <svg className="w-10 h-10 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <p className="hd-label text-charcoal hd-blink">
+                  {phase === 'locked' ? 'Decrypting domain…' : 'Revealing topic…'}
+                </p>
+              </div>
+            )}
+
+            {/* Revealed state */}
+            {phase === 'revealed' && (
+              <div className="hd-pop">
+                <div className={`inline-flex items-center justify-center w-20 h-20 rounded-xl mb-5 border-2 border-ink shadow-hd -rotate-3 ${meta.tile}`}>
+                  <span className="text-4xl font-bold text-ink leading-none">
+                    {shape === 'triangle' ? '△' : shape === 'circle' ? '○' : shape === 'square' ? '□' : '☆'}
+                  </span>
+                </div>
+
+                <div className="flex justify-center mb-3">
+                  <span className="hd-kicker text-ink">Domain Unlocked</span>
+                </div>
+                <h2 className="hd-h1 text-ink mb-4 break-words">
+                  {topic}
+                </h2>
+                <p className="text-sm text-charcoal max-w-sm mx-auto mb-8 leading-relaxed">
+                  {description}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={onContinue}
+                  className="hd-btn hd-btn-primary hd-btn-lg w-full sm:w-auto"
+                >
+                  ENTER THE ARENA →
+                </button>
+              </div>
+            )}
           </div>
-
-          {/* Locked / Revealing state */}
-          {phase !== 'revealed' && (
-            <div className="flex flex-col items-center gap-4 py-8">
-              <div className={`
-                w-24 h-24 rounded-2xl border-2 border-dashed border-slate-600
-                flex items-center justify-center
-                transition-all duration-700
-                ${phase === 'revealing' ? 'scale-110 border-purple-500/60 rotate-12' : ''}
-              `}>
-                <svg className="w-10 h-10 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <p className="text-sm text-slate-400 animate-pulse">
-                {phase === 'locked' ? 'Decrypting domain…' : 'Revealing topic…'}
-              </p>
-            </div>
-          )}
-
-          {/* Revealed state */}
-          {phase === 'revealed' && (
-            <div className="animate-in fade-in zoom-in duration-500">
-              <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 ${meta.glow} bg-white/5 border border-white/10`}>
-                <span className={`text-3xl font-bold ${meta.color}`}>
-                  {shape === 'triangle' ? '△' : shape === 'circle' ? '○' : shape === 'square' ? '□' : '☆'}
-                </span>
-              </div>
-
-              <div className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">
-                Domain Unlocked
-              </div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3">
-                {topic}
-              </h2>
-              <p className="text-sm text-slate-400 max-w-sm mx-auto mb-8">
-                {description}
-              </p>
-
-              <button
-                type="button"
-                onClick={onContinue}
-                className="
-                  px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide
-                  bg-gradient-to-r from-purple-600 to-violet-500 text-white
-                  shadow-[0_0_25px_rgba(139,92,246,0.45)]
-                  hover:shadow-[0_0_35px_rgba(139,92,246,0.65)]
-                  hover:scale-[1.02] transition-all duration-300
-                "
-              >
-                ENTER THE ARENA →
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>

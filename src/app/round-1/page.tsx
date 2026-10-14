@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ParticipantLayout from '@/components/layout/ParticipantLayout';
+import PixelCluster from '@/components/brand/PixelCluster';
 import TopicReveal from '@/components/round1/TopicReveal';
 import Round1ProblemList, { Round1Problem } from '@/components/round1/Round1ProblemList';
 import { ShapeType } from '@/components/round1/ShapeCard';
@@ -46,95 +47,68 @@ function Round1Sidebar({
   roundScore: number;
   maxRoundScore: number;
 }) {
+  const overview = [
+    { label: 'Round Name', value: 'The Path of Fate' },
+    { label: 'Duration', value: '60 Minutes' },
+    { label: 'Problems', value: `${total} Problems` },
+    { label: 'Solve Order', value: 'Any Order' },
+    { label: 'Max Score', value: `${maxRoundScore} Points` },
+  ];
+
   return (
     <div className="flex flex-col gap-5">
-      {/* Overview */}
-      <div className="rounded-2xl border border-[#1e224d] bg-[#0d0e24] p-5">
-        <h3 className="text-xs font-mono tracking-widest text-purple-400 uppercase mb-4">
-          ROUND 1 OVERVIEW
-        </h3>
-        <ul className="space-y-3 text-sm">
-          <li className="flex items-center gap-3">
-            <span className="text-purple-400">📋</span>
-            <div>
-              <div className="text-slate-400 text-xs">Round Name</div>
-              <div className="text-white font-medium">The Path of Fate</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-cyan-400">⏱</span>
-            <div>
-              <div className="text-slate-400 text-xs">Duration</div>
-              <div className="text-white font-medium">60 Minutes</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-yellow-400">★</span>
-            <div>
-              <div className="text-slate-400 text-xs">Problems</div>
-              <div className="text-white font-medium">{total} Problems</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-pink-400">↕</span>
-            <div>
-              <div className="text-slate-400 text-xs">Solve Order</div>
-              <div className="text-white font-medium">Any Order</div>
-            </div>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-emerald-400">★</span>
-            <div>
-              <div className="text-slate-400 text-xs">Max Score</div>
-              <div className="text-white font-medium">{maxRoundScore} Points</div>
-            </div>
-          </li>
-        </ul>
-      </div>
-
       {/* Live score */}
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5 flex items-center justify-between">
+      <div className="hd-card-brand p-5 flex items-center justify-between gap-4">
         <div>
-          <h3 className="text-xs font-mono tracking-widest text-emerald-400 uppercase mb-1">
-            Your Score
-          </h3>
-          <p className="text-[11px] text-slate-400">This round</p>
+          <h3 className="hd-label text-ink mb-1">Your Score</h3>
+          <p className="text-xs text-ink/80">This round</p>
         </div>
-        <div className="text-2xl font-mono font-extrabold text-white">
-          {roundScore} <span className="text-sm text-slate-400">PTS</span>
+        <div className="hd-display text-4xl text-ink leading-none">
+          {roundScore} <span className="font-mono text-sm tracking-normal">PTS</span>
         </div>
       </div>
 
       {/* Selected domain */}
-      <div className="rounded-2xl border border-purple-500/30 bg-purple-500/5 p-5">
-        <h3 className="text-xs font-mono tracking-widest text-purple-400 uppercase mb-2">
-          YOUR DOMAIN
-        </h3>
-        <p className="text-white font-semibold">{topic}</p>
-        <p className="text-xs text-slate-400 mt-1">
-          {solvedCount} of {total} solved
-        </p>
+      <div className="hd-card p-5">
+        <h3 className="hd-label text-muted mb-2">YOUR DOMAIN</h3>
+        <p className="hd-h3 text-ink break-words">{topic}</p>
+        <div className="mt-3">
+          <span className="hd-badge hd-badge-ink">
+            {solvedCount} of {total} solved
+          </span>
+        </div>
+      </div>
+
+      {/* Overview */}
+      <div className="hd-card p-5">
+        <h3 className="hd-label text-muted mb-4">ROUND 1 OVERVIEW</h3>
+        <dl className="divide-y divide-[var(--border-subtle)] text-sm">
+          {overview.map((item) => (
+            <div key={item.label} className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
+              <dt className="text-charcoal">{item.label}</dt>
+              <dd className="font-mono font-bold text-ink text-right">{item.value}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       {/* Tips */}
-      <div className="rounded-2xl border border-[#1e224d] bg-[#0d0e24] p-5">
-        <h3 className="text-xs font-mono tracking-widest text-purple-400 uppercase mb-3 flex items-center gap-2">
-          💡 TIPS
-        </h3>
-        <ul className="space-y-2 text-xs text-slate-400">
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            You can solve the problems in any order.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            Partial progress is saved automatically.
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-400 mt-0.5">•</span>
-            Focus on correctness first, then speed.
-          </li>
-        </ul>
+      <div className="hd-card-flat bg-sand p-5">
+        <h3 className="hd-label text-ink mb-3">TIPS</h3>
+        <ol className="space-y-2.5 text-sm text-charcoal">
+          {[
+            'You can solve the problems in any order.',
+            'Partial progress is saved automatically.',
+            'Focus on correctness first, then speed.',
+          ].map((tip, i) => (
+            <li key={tip} className="flex items-start gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-paper font-mono text-[0.7rem] font-bold text-ink">
+                {i + 1}
+              </span>
+              <span className="pt-0.5">{tip}</span>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   );
@@ -241,7 +215,7 @@ function Round1PageContent() {
   if (selectedPath === null) {
     return (
       <ParticipantLayout>
-        <div className="flex items-center justify-center min-h-[40vh] text-slate-400 text-sm">
+        <div className="flex items-center justify-center min-h-[40vh] hd-label text-muted">
           Loading your path…
         </div>
       </ParticipantLayout>
@@ -275,18 +249,25 @@ function Round1PageContent() {
           />
         }
       >
-        <div className="mb-5 text-xs text-slate-500 font-mono">
-          Dashboard <span className="mx-1.5 text-slate-600">›</span>
-          <span className="text-purple-400">Round 1</span>
+        <div className="hd-label text-muted">
+          Dashboard <span className="mx-1.5" aria-hidden="true">›</span>
+          <span className="text-ink">Round 1</span>
         </div>
 
-        <div className="mb-6">
-          <div className="text-[11px] font-mono text-purple-400 tracking-widest uppercase mb-1">
-            ROUND 1
+        <div className="relative overflow-hidden hd-card p-5 sm:p-7">
+          <div className="absolute inset-0 hd-dots opacity-50 pointer-events-none" aria-hidden="true" />
+          <PixelCluster className="absolute right-4 top-4 hidden sm:block" cell={10} />
+          <div className="relative flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-6">
+            <span className="hd-display text-[clamp(4rem,3rem+4vw,6.5rem)] leading-[0.8] text-brand" aria-hidden="true">
+              01
+            </span>
+            <div className="min-w-0">
+              <span className="hd-kicker text-ink">ROUND 1</span>
+              <h1 className="hd-h1 text-ink mt-2">
+                The Path of Fate
+              </h1>
+            </div>
           </div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white">
-            The Path of Fate
-          </h1>
         </div>
 
         <Round1ProblemList

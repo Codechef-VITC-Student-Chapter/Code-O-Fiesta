@@ -16,7 +16,7 @@ export default function SubmissionHistory({ history, onRestoreCode }: Submission
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(history.length / itemsPerPage);
-  
+
   const paginatedHistory = history.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -25,20 +25,20 @@ export default function SubmissionHistory({ history, onRestoreCode }: Submission
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'accepted':
-        return <span className="px-2 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] font-bold">AC</span>;
+        return <span className="hd-badge hd-badge-ok">AC</span>;
       case 'wrong_answer':
-        return <span className="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold">WA</span>;
+        return <span className="hd-badge hd-badge-bad">WA</span>;
       case 'time_limit_exceeded':
-        return <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold">TLE</span>;
+        return <span className="hd-badge hd-badge-warn">TLE</span>;
       case 'compilation_error':
-        return <span className="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold">CE</span>;
+        return <span className="hd-badge hd-badge-bad">CE</span>;
       case 'runtime_error':
-        return <span className="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold">RE</span>;
+        return <span className="hd-badge hd-badge-bad">RE</span>;
       case 'pending':
       case 'processing':
-        return <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-bold animate-pulse">PENDING</span>;
+        return <span className="hd-badge hd-badge-lilac">PENDING</span>;
       default:
-        return <span className="px-2 py-0.5 rounded bg-slate-500/10 border border-slate-500/20 text-slate-400 text-[10px] font-bold">ERR</span>;
+        return <span className="hd-badge hd-badge-muted">ERR</span>;
     }
   };
 
@@ -57,11 +57,11 @@ export default function SubmissionHistory({ history, onRestoreCode }: Submission
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#080814] text-xs font-mono">
+    <div className="flex flex-col h-full hd-card-flat overflow-hidden text-xs font-mono text-ink">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="hd-table text-left [&_th]:!px-3 [&_th]:!py-2.5 [&_td]:!px-3 [&_td]:!py-2.5">
           <thead>
-            <tr className="border-b border-[var(--border)] text-[10px] text-[var(--text-muted)] uppercase bg-[#060610]/40">
+            <tr>
               <th className="py-2.5 px-3"># Attempt</th>
               <th className="py-2.5 px-3">Language</th>
               <th className="py-2.5 px-3">Verdict</th>
@@ -72,7 +72,7 @@ export default function SubmissionHistory({ history, onRestoreCode }: Submission
           <tbody>
             {paginatedHistory.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-[var(--text-muted)] select-none">
+                <td colSpan={5} className="py-8 text-center text-muted font-sans text-sm select-none">
                   No submissions found.
                 </td>
               </tr>
@@ -80,20 +80,20 @@ export default function SubmissionHistory({ history, onRestoreCode }: Submission
               paginatedHistory.map((sub, idx) => {
                 const attemptNumber = history.length - ((currentPage - 1) * itemsPerPage + idx);
                 const isRestoreable = !!sub.sourceCode;
-                
+
                 return (
                   <tr
                     key={sub.id}
                     onClick={() => isRestoreable && handleRowClick(sub)}
-                    className={`border-b border-[var(--border-subtle)] transition-colors duration-200 ${
-                      isRestoreable ? 'hover:bg-purple-950/10 cursor-pointer' : ''
+                    className={`transition-colors duration-150 ${
+                      isRestoreable ? 'cursor-pointer' : '[&:hover]:!bg-transparent'
                     }`}
                   >
-                    <td className="py-2 px-3 font-bold text-white">#{attemptNumber}</td>
-                    <td className="py-2 px-3 text-slate-300 uppercase">{sub.language || 'cpp'}</td>
-                    <td className="py-2 px-3">{getStatusBadge(sub.status)}</td>
-                    <td className="py-2 px-3 text-slate-400">{sub.timeMs !== undefined ? `${sub.timeMs} ms` : '-'}</td>
-                    <td className="py-2 px-3 text-slate-400">{sub.memoryKb !== undefined ? `${sub.memoryKb} KB` : '-'}</td>
+                    <td className="font-bold text-ink tabular-nums">#{attemptNumber}</td>
+                    <td className="text-charcoal uppercase">{sub.language || 'cpp'}</td>
+                    <td>{getStatusBadge(sub.status)}</td>
+                    <td className="text-charcoal tabular-nums whitespace-nowrap">{sub.timeMs !== undefined ? `${sub.timeMs} ms` : '-'}</td>
+                    <td className="text-charcoal tabular-nums whitespace-nowrap">{sub.memoryKb !== undefined ? `${sub.memoryKb} KB` : '-'}</td>
                   </tr>
                 );
               })
@@ -104,21 +104,21 @@ export default function SubmissionHistory({ history, onRestoreCode }: Submission
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex justify-between items-center px-3 py-2 border-t border-[var(--border-subtle)] mt-auto bg-[#060610]/20 select-none">
+        <div className="flex justify-between items-center gap-2 px-3 py-2 border-t-2 border-ink mt-auto bg-sand select-none">
           <button
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-2.5 py-1 rounded bg-[#0a0a18] border border-[var(--border)] text-[var(--text-secondary)] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="hd-btn hd-btn-sm hd-btn-square"
           >
             ← Prev
           </button>
-          <span className="text-[10px] text-[var(--text-muted)] uppercase">
+          <span className="hd-label text-charcoal tabular-nums">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className="px-2.5 py-1 rounded bg-[#0a0a18] border border-[var(--border)] text-[var(--text-secondary)] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="hd-btn hd-btn-sm hd-btn-square"
           >
             Next →
           </button>

@@ -183,7 +183,7 @@ function AdminContent() {
   return (
     <AdminLayout
       title="Organizer Control Panel"
-      subtitle="VITC Code-O-Fiesta Live Event Operations"
+      subtitle="Hackday Live Event Operations"
       nav={<AdminNav />}
       actions={<EventStatus status={statusType} label={statusLabel} />}
     >

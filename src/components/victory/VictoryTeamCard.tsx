@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import PixelCluster from '@/components/brand/PixelCluster';
 
 export interface RoundSummary {
   id: string;
@@ -24,6 +25,12 @@ const DEFAULT_ROUND_SUMMARIES: RoundSummary[] = [
   { id: '3', name: 'Round 3: Constraint Crucible', score: 30, maxScore: 50, completed: true },
 ];
 
+/*
+ * NOTE: everything inside #team-victory-card is rasterised by html-to-image /
+ * html2canvas. Colours there come ONLY from the plain-hex `.victory-export-*`
+ * classes in globals.css or plain-hex inline styles — no Tailwind colour
+ * utilities (oklch / color-mix) and no CSS variables.
+ */
 export default function VictoryTeamCard({
   teamId,
   memberNames = ['Member 01', 'Member 02'],
@@ -34,43 +41,60 @@ export default function VictoryTeamCard({
   const safeTeamName = teamId || 'TEAM_014';
 
   return (
-    <div className="bg-[#111120] border border-purple-500/20 rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-xl relative">
+    <div className="hd-card p-5 sm:p-8 flex flex-col gap-6 relative text-ink">
       {/* Header bar */}
-      <div className="border-b border-[#1e224d] pb-4">
-        <h2 className="text-lg font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span>YOUR TEAM CERTIFICATE</span>
-        </h2>
-        <p className="text-xs text-slate-400 font-mono mt-0.5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b-2 border-ink pb-4">
+        <div>
+          <span className="hd-label text-muted">Keep this one</span>
+          <h2 className="hd-h2 mt-1">Your team certificate</h2>
+        </div>
+        <p className="hd-label text-charcoal sm:text-right max-w-xs">
           Official proof of completion and arena victory
         </p>
       </div>
 
       {/* Certificate card */}
-      <div className="flex justify-center w-full">
+      <div className="flex justify-center w-full pb-2 pr-2">
         <div
           id="team-victory-card"
-          className="victory-export-card w-full max-w-2xl rounded-2xl p-6 sm:p-8 relative overflow-hidden flex flex-col gap-6 text-white font-mono"
+          className="victory-export-card w-full max-w-2xl p-6 sm:p-8 relative overflow-hidden flex flex-col gap-6 font-mono"
         >
+          {/* Decorative pixels (plain hex fills) */}
+          <PixelCluster
+            className="absolute right-5 top-16 sm:right-8 sm:top-20"
+            color="#ff5034"
+            accent="#bba8f2"
+            cell={10}
+          />
+
           {/* Card Top Brand & Event ID */}
-          <div className="victory-export-topbar flex items-center justify-between pb-3 text-xs tracking-wider">
-            <div className="flex items-center gap-2">
-              <span className="victory-export-brand font-bold">&lt;/&gt;</span>
-              <span className="victory-export-title font-extrabold tracking-widest">
-                CODE-O-FIESTA<span className="victory-export-brand">_</span>
-              </span>
-            </div>
-            <span className="victory-export-badge px-2.5 py-0.5 rounded text-[11px] font-bold">
+          <div className="victory-export-topbar relative flex items-center justify-between gap-3 pb-3 text-xs tracking-wider">
+            <span
+              className="font-display text-xl leading-none"
+              style={{
+                backgroundColor: '#ff5034',
+                color: '#080808',
+                padding: '3px 6px 1px',
+                letterSpacing: '-0.05em',
+              }}
+            >
+              Hackday
+            </span>
+            <span className="victory-export-badge px-2.5 py-0.5 rounded-md text-[11px] font-bold">
               COF25
             </span>
           </div>
 
           {/* Arena Conquered Pill & Title */}
-          <div className="flex flex-col gap-1.5">
-            <div className="victory-export-pill inline-flex items-center gap-2 text-sm font-bold tracking-wider">
+          <div className="relative flex flex-col gap-2 pr-16 sm:pr-20">
+            <div className="victory-export-pill inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em]">
               <span>🏆</span>
-              <span>ARENA CONQUERED</span>
+              <span>Arena conquered</span>
             </div>
-            <h3 className="victory-export-team-name text-2xl sm:text-3xl font-black tracking-tight uppercase">
+            <h3
+              className="victory-export-team-name font-display text-3xl sm:text-5xl leading-[0.95] uppercase break-words"
+              style={{ letterSpacing: '-0.04em' }}
+            >
               {safeTeamName}
             </h3>
             <p className="victory-export-meta text-xs font-sans tracking-wide">
@@ -79,32 +103,32 @@ export default function VictoryTeamCard({
           </div>
 
           {/* Stats Bar */}
-          <div className="victory-export-stats grid grid-cols-2 gap-3 rounded-xl p-4 text-center">
-            <div className="victory-export-stat flex flex-col gap-1">
-              <span className="victory-export-label text-[10px] font-bold tracking-wider uppercase">FINAL SCORE</span>
-              <span className="victory-export-score text-xl sm:text-2xl font-black">{finalScore} PTS</span>
+          <div className="victory-export-stats grid grid-cols-2 rounded-xl text-center overflow-hidden">
+            <div className="victory-export-stat flex flex-col gap-1 p-4" style={{ borderRight: '2px solid #080808' }}>
+              <span className="victory-export-label text-[10px] tracking-wider uppercase">FINAL SCORE</span>
+              <span className="victory-export-score font-display text-2xl sm:text-4xl leading-none">{finalScore} PTS</span>
             </div>
-            <div className="victory-export-stat flex flex-col gap-1">
-              <span className="victory-export-label text-[10px] font-bold tracking-wider uppercase">ROUNDS</span>
-              <span className="victory-export-total text-xl sm:text-2xl font-black">{roundsDone}</span>
+            <div className="victory-export-stat flex flex-col gap-1 p-4">
+              <span className="victory-export-label text-[10px] tracking-wider uppercase">ROUNDS</span>
+              <span className="victory-export-total font-display text-2xl sm:text-4xl leading-none">{roundsDone}</span>
             </div>
           </div>
 
           {/* Round Progress Lines */}
-          <div className="flex flex-col gap-3 py-1">
+          <div className="flex flex-col gap-3.5 py-1">
             {roundSummaries.map((round) => {
               const pct = round.maxScore > 0 ? Math.min(100, Math.round((round.score / round.maxScore) * 100)) : 100;
               return (
-                <div key={round.id} className="victory-export-round flex flex-col gap-1 text-xs">
-                  <div className="flex items-center justify-between">
+                <div key={round.id} className="victory-export-round flex flex-col gap-1.5 text-xs">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="victory-export-round-name font-medium">{round.name}</span>
-                    <span className="victory-export-round-score flex items-center gap-1.5 font-bold">
+                    <span className="victory-export-round-score flex items-center gap-1.5 font-bold whitespace-nowrap">
                       <span>✓</span>
                       <span>{round.score} pts</span>
                     </span>
                   </div>
                   {/* Progress Bar Track */}
-                  <div className="victory-export-progress-track w-full h-1.5 rounded-full overflow-hidden">
+                  <div className="victory-export-progress-track w-full h-2.5 rounded-full overflow-hidden">
                     <div
                       className="victory-export-progress-bar h-full rounded-full"
                       style={{ width: `${Math.max(10, pct)}%` }}
@@ -116,8 +140,8 @@ export default function VictoryTeamCard({
           </div>
 
           {/* Card Footer Branding */}
-          <div className="victory-export-footer border-t pt-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px]">
-            <span>VIT Chennai · CodeChef Student Chapter</span>
+          <div className="victory-export-footer border-t-2 pt-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] uppercase tracking-[0.08em]">
+            <span>CodeChef VIT Chennai Student Chapter</span>
             <span className="victory-export-footer-accent font-bold">EVENT ID: COF25</span>
           </div>
         </div>

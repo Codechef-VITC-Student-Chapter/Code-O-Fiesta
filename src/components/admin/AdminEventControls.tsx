@@ -41,31 +41,31 @@ export default function AdminEventControls({
     <>
       {/* Confirmation Modal */}
       {confirmRestart !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0d0e24] border border-rose-500/40 rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4">
+          <div className="hd-card shadow-hd-lg p-6 max-w-sm w-full hd-pop">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30">
-                <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-2 rounded-lg bg-bad-soft border-2 border-ink">
+                <svg className="w-5 h-5 text-bad" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className="text-sm font-mono font-extrabold text-white uppercase tracking-wider">
-                Confirm Restart
+              <h3 className="hd-h3 text-ink">
+                Confirm restart
               </h3>
             </div>
-            <p className="text-xs font-mono text-slate-300 leading-relaxed mb-5">
-              This will <span className="text-rose-400 font-bold">delete all team progress</span> for Round {confirmRestart} and restart it from scratch. This action cannot be undone.
+            <p className="text-sm text-charcoal leading-relaxed mb-5">
+              This will <span className="font-bold text-bad">delete all team progress</span> for Round {confirmRestart} and restart it from scratch. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmRestart(null)}
-                className="flex-1 py-2 bg-[var(--surface-interactive)] border border-[var(--border)] text-slate-300 rounded text-[10px] font-mono font-bold uppercase tracking-wider hover:bg-[var(--surface-secondary)] transition-colors"
+                className="hd-btn hd-btn-sm flex-1"
               >
                 CANCEL
               </button>
               <button
                 onClick={handleConfirm}
-                className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-mono font-extrabold uppercase tracking-wider transition-colors"
+                className="hd-btn hd-btn-danger hd-btn-sm flex-1"
               >
                 RESTART ↺
               </button>
@@ -74,8 +74,8 @@ export default function AdminEventControls({
         </div>
       )}
 
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm mb-6">
-        <h3 className="text-xs font-mono font-extrabold text-[var(--text-secondary)] uppercase tracking-wider mb-4">
+      <div className="hd-card p-5 mb-6">
+        <h3 className="hd-label text-ink mb-4">
           STAGE CONTROL PANEL
         </h3>
 
@@ -86,39 +86,39 @@ export default function AdminEventControls({
             const isPaused = round.status === 'PAUSED';
             const isCompleted = round.status === 'COMPLETED';
 
-            let statusColor = 'text-[var(--text-muted)]';
-            let borderStyle = 'border-[var(--border-subtle)]';
+            let statusColor = 'hd-badge-muted';
+            let borderStyle = 'bg-sand border-[var(--border-subtle)]';
             let statusLabel = 'LOCKED';
 
             if (isActive) {
-              statusColor = 'text-cyan-400 font-extrabold animate-pulse';
-              borderStyle = 'border-cyan-500/40 ring-1 ring-cyan-500/10';
+              statusColor = 'hd-badge-brand';
+              borderStyle = 'bg-paper border-ink shadow-hd-sm';
               statusLabel = 'ACTIVE NOW';
             } else if (isPaused) {
-              statusColor = 'text-amber-400 font-extrabold';
-              borderStyle = 'border-amber-500/40 ring-1 ring-amber-500/10';
+              statusColor = 'hd-badge-warn';
+              borderStyle = 'bg-warn-soft border-ink';
               statusLabel = 'PAUSED';
             } else if (isCompleted) {
-              statusColor = 'text-[var(--success)] font-bold';
-              borderStyle = 'border-[var(--success)]/30';
+              statusColor = 'hd-badge-ok';
+              borderStyle = 'bg-paper border-[var(--border-subtle)]';
               statusLabel = 'COMPLETED';
             }
 
             return (
               <div
                 key={round.roundNumber}
-                className={`bg-[var(--surface-secondary)] border ${borderStyle} rounded-xl p-4 flex flex-col justify-between`}
+                className={`border-2 ${borderStyle} rounded-xl p-4 flex flex-col justify-between min-w-0`}
               >
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <span className="text-[9px] font-mono text-[var(--text-muted)] block uppercase">
+                <div className="flex justify-between items-start gap-3 mb-3">
+                  <div className="min-w-0">
+                    <span className="hd-label text-muted block">
                       STAGE 0{round.roundNumber}
                     </span>
-                    <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wide">
+                    <h4 className="hd-h3 text-base text-ink mt-1">
                       {round.name}
                     </h4>
                   </div>
-                  <span className={`text-[9px] font-mono uppercase ${statusColor}`}>
+                  <span className={`hd-badge shrink-0 ${statusColor}`}>
                     {statusLabel}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export default function AdminEventControls({
                   {isUpcoming && (
                     <button
                       onClick={() => onStartRound(round.roundNumber)}
-                      className="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded text-[10px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors"
+                      className="hd-btn hd-btn-primary hd-btn-sm hd-btn-block"
                     >
                       START ROUND →
                     </button>
@@ -138,13 +138,13 @@ export default function AdminEventControls({
                     <div className="flex gap-2">
                       <button
                         onClick={() => onPauseRound(round.roundNumber)}
-                        className="flex-1 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded text-[10px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors"
+                        className="hd-btn hd-btn-warn hd-btn-sm flex-1"
                       >
                         PAUSE ⏸
                       </button>
                       <button
                         onClick={() => onCompleteRound(round.roundNumber)}
-                        className="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded text-[10px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors"
+                        className="hd-btn hd-btn-dark hd-btn-sm flex-1"
                       >
                         COMPLETE ✓
                       </button>
@@ -155,13 +155,13 @@ export default function AdminEventControls({
                     <div className="flex gap-2">
                       <button
                         onClick={() => onResumeRound(round.roundNumber)}
-                        className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors"
+                        className="hd-btn hd-btn-ok hd-btn-sm flex-1"
                       >
                         RESUME ▶
                       </button>
                       <button
                         onClick={() => onCompleteRound(round.roundNumber)}
-                        className="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded text-[10px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors"
+                        className="hd-btn hd-btn-dark hd-btn-sm flex-1"
                       >
                         COMPLETE ✓
                       </button>
@@ -169,7 +169,7 @@ export default function AdminEventControls({
                   )}
 
                   {isCompleted && (
-                    <div className="w-full py-2 bg-[var(--surface-interactive)] border border-[var(--border-subtle)] rounded text-center text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase">
+                    <div className="w-full py-2.5 bg-ok-soft border-2 border-[#0f5b31] rounded-full text-center hd-label text-[#0f5b31]">
                       STAGE FINISHED
                     </div>
                   )}
@@ -178,7 +178,7 @@ export default function AdminEventControls({
                   {(isActive || isPaused || isCompleted) && (
                     <button
                       onClick={() => handleRestartClick(round.roundNumber)}
-                      className="w-full py-2 bg-rose-900/40 hover:bg-rose-700/50 border border-rose-500/30 text-rose-400 hover:text-rose-300 rounded text-[10px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors"
+                      className="hd-btn hd-btn-danger hd-btn-sm hd-btn-block"
                     >
                       RESTART ↺
                     </button>

@@ -30,21 +30,21 @@ export default function EditorStatus({
   const displayLang = language === 'cpp' ? 'C++ 17' : language === 'c' ? 'C (GCC)' : language === 'python' ? 'Python 3' : language === 'java' ? 'Java 17' : language === 'go' ? 'Go 1.13' : 'JavaScript';
 
   return (
-    <div className="flex items-center justify-between px-4 py-1 bg-[#080814] border-t border-[var(--border)] text-[10px] font-mono text-slate-500 select-none">
-      <div className="flex items-center gap-4">
-        <span className="text-purple-400 font-bold uppercase">{displayLang}</span>
-        <span className="hover:text-purple-300 transition-colors">
+    <div className="flex items-center justify-between gap-3 px-3 sm:px-4 py-1.5 bg-[#0d0d0b] border-t border-[#2a2924] text-[10px] sm:text-[11px] font-mono text-[#a8a596] select-none">
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <span className="text-brand font-bold uppercase tracking-wider">{displayLang}</span>
+        <span className="tabular-nums">
           Ln {cursorPosition.line}, Col {cursorPosition.column}
         </span>
         <span className="hidden sm:inline">UTF-8</span>
       </div>
 
-      <div className="flex items-center gap-4">
-        <span className="hover:text-purple-300 transition-colors">
-          Submissions: <span className="text-purple-400 font-bold">{submissionCount}</span>
+      <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+        <span>
+          Submissions: <span className="text-cream font-bold tabular-nums">{submissionCount}</span>
         </span>
         {timerSeconds !== undefined && (
-          <div className="flex items-center gap-1 text-purple-400 font-bold">
+          <div className="flex items-center gap-1 text-lilac font-bold tabular-nums">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>

@@ -30,7 +30,7 @@ export default function EventProgress({
   onStepClick,
 }: EventProgressProps) {
   return (
-    <div className={`w-full bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 shadow-sm ${className}`}>
+    <div className={`w-full hd-card p-4 sm:p-5 ${className}`}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative">
         {steps.map((step, index) => {
           const isCompleted = step.state === 'completed';
@@ -47,22 +47,22 @@ export default function EventProgress({
               >
                 {/* Step Indicator Dot/Badge */}
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold border transition-all ${
+                  className={`w-9 h-9 shrink-0 rounded-[var(--radius-sm)] flex items-center justify-center font-mono text-xs font-bold border-2 transition-all ${
                     isCompleted
-                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50'
+                      ? 'bg-ok-soft text-[#0f5b31] border-ink'
                       : isActive
-                      ? 'bg-cyan-500/20 text-cyan-400 border-cyan-400 ring-2 ring-cyan-400/20'
+                      ? 'bg-brand text-ink border-ink shadow-hd-sm'
                       : isLocked
-                      ? 'bg-[var(--surface-secondary)] text-[var(--text-muted)] border-[var(--border-subtle)] opacity-60'
-                      : 'bg-[var(--surface-secondary)] text-[var(--text-secondary)] border-[var(--border)]'
+                      ? 'bg-sand text-muted border-[var(--border-subtle)]'
+                      : 'bg-paper text-ink border-ink'
                   }`}
                 >
                   {isCompleted ? (
-                    <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                   ) : isLocked ? (
-                    <svg className="w-3.5 h-3.5 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   ) : (
@@ -71,22 +71,22 @@ export default function EventProgress({
                 </div>
 
                 {/* Step Content */}
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-0">
                   <span
-                    className={`text-xs font-semibold ${
+                    className={`text-sm font-semibold ${
                       isActive
-                        ? 'text-[var(--accent)] font-bold'
+                        ? 'text-ink font-bold'
                         : isCompleted
-                        ? 'text-emerald-400'
+                        ? 'text-[#0f5b31]'
                         : isLocked
-                        ? 'text-[var(--text-muted)]'
-                        : 'text-[var(--text-secondary)]'
+                        ? 'text-muted'
+                        : 'text-charcoal'
                     }`}
                   >
                     {step.name}
                   </span>
                   {step.description && (
-                    <span className="text-[10px] text-[var(--text-muted)] hidden lg:inline">
+                    <span className="hd-label text-muted hidden lg:inline mt-0.5">
                       {step.description}
                     </span>
                   )}
@@ -98,7 +98,7 @@ export default function EventProgress({
                 <div
                   className={`hidden sm:block flex-1 h-0.5 max-w-[60px] self-center transition-colors ${
                     isCompleted
-                      ? 'bg-emerald-500/40'
+                      ? 'bg-ink'
                       : 'bg-[var(--border-subtle)]'
                   }`}
                 />

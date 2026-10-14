@@ -18,8 +18,8 @@ export default function ParticipantLayout({
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-[#05060e] text-white">
-      
+    <div className="min-h-screen flex bg-cream text-ink">
+
       {/* 1. PERSISTENT LEFT SIDEBAR (Desktop) */}
       <div className="hidden lg:block w-64 flex-shrink-0 h-screen sticky top-0 z-30">
         <ParticipantSidebar />
@@ -27,18 +27,26 @@ export default function ParticipantLayout({
 
       {/* Mobile Drawer Sidebar */}
       {mobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileSidebarOpen(false)} />
-          <div className="relative z-10 w-64 h-full">
-            <ParticipantSidebar onCloseMobile={() => setMobileSidebarOpen(false)} />
+        <div className="fixed inset-0 z-50 lg:hidden flex" role="dialog" aria-modal="true" aria-label="Navigation menu">
+          <div
+            className="fixed inset-0 bg-ink/60 transition-opacity duration-300 starting:opacity-0"
+            onClick={() => setMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 w-64 max-w-[85vw] h-full shadow-hd-lg transition-transform duration-300 ease-[var(--ease-out)] starting:-translate-x-full">
+            <ParticipantSidebar className="w-full" onCloseMobile={() => setMobileSidebarOpen(false)} />
           </div>
         </div>
       )}
 
       {/* 2. MAIN APPLICATION CONTENT AREA */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto overflow-x-hidden">
         {/* Top Header Bar */}
-        <TopBar onMenuClick={() => setMobileSidebarOpen(true)} />
+        <TopBar
+          className="sticky top-0 z-20"
+          onMenuClick={() => setMobileSidebarOpen(true)}
+          menuOpen={mobileSidebarOpen}
+        />
 
         {/* Page Content Body */}
         <main className={`flex-1 p-4 sm:p-6 lg:p-8 max-w-[1800px] w-full mx-auto ${className}`}>
@@ -47,7 +55,7 @@ export default function ParticipantLayout({
               <div className="xl:col-span-8 flex flex-col gap-6 min-w-0">
                 {children}
               </div>
-              <div className="xl:col-span-4 flex flex-col gap-6">
+              <div className="xl:col-span-4 flex flex-col gap-6 min-w-0">
                 {rightSidebar}
               </div>
             </div>

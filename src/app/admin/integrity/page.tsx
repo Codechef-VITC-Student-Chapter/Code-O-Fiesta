@@ -20,14 +20,15 @@ function formatDuration(ms: number) {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; color: string }> = {
-    NORMAL: { label: '🟢 Normal', color: 'text-emerald-400 bg-emerald-400/10' },
-    REVIEW: { label: '🟡 Review', color: 'text-yellow-400 bg-yellow-400/10' },
-    SUSPICIOUS: { label: '🟠 Suspicious', color: 'text-orange-400 bg-orange-400/10' },
-    HIGH_ALERT: { label: '🔴 High Alert', color: 'text-red-400 bg-red-400/10' },
+    NORMAL: { label: 'Normal', color: 'hd-badge-ok' },
+    REVIEW: { label: 'Review', color: 'hd-badge-warn' },
+    SUSPICIOUS: { label: 'Suspicious', color: 'hd-badge-brand' },
+    HIGH_ALERT: { label: 'High Alert', color: 'hd-badge-bad' },
   };
   const s = map[status] || map.NORMAL;
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-bold ${s.color}`}>
+    <span className={`hd-badge ${s.color}`}>
+      <span className="hd-dot" aria-hidden="true" />
       {s.label}
     </span>
   );
@@ -186,9 +187,9 @@ function IntegrityContent() {
     }
   };
 
-  if (error) return <div className="text-red-400 p-8">Failed to load integrity data: {error.message}</div>;
-  if (!data) return <div className="text-slate-400 p-8">Loading...</div>;
-  if (data.error) return <div className="text-red-400 p-8">Error: {data.error}</div>;
+  if (error) return <div className="min-h-screen bg-cream p-4 sm:p-8"><div role="alert" className="hd-alert hd-alert-bad text-[#8f1a10] max-w-2xl">Failed to load integrity data: {error.message}</div></div>;
+  if (!data) return <div className="min-h-screen bg-cream p-4 sm:p-8"><div className="hd-label text-muted">Loading...</div></div>;
+  if (data.error) return <div className="min-h-screen bg-cream p-4 sm:p-8"><div role="alert" className="hd-alert hd-alert-bad text-[#8f1a10] max-w-2xl">Error: {data.error}</div></div>;
 
   return (
     <AdminLayout
@@ -196,61 +197,74 @@ function IntegrityContent() {
       subtitle="Live monitoring of participant away sessions and fullscreen exits."
       nav={<AdminNav />}
     >
-      <div className="flex flex-col md:flex-row gap-6 mb-8 p-6 bg-[#0d0e24] border border-[#1e224d] rounded-xl">
-        <div className="flex-1">
-          <h2 className="text-lg font-bold mb-1">Global Settings</h2>
-          <p className="text-sm text-slate-400 mb-4">Real-time enforcement controls. These apply instantly to all active participants.</p>
-          
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-[#151838] p-3 rounded text-center">
-              <div className="text-slate-400 text-xs uppercase mb-1">Active Teams</div>
-              <div className="text-xl font-bold">{data.stats?.activeTeams || 0}</div>
+      <div className="hd-card flex flex-col md:flex-row gap-6 mb-8 p-5 sm:p-6">
+        <div className="flex-1 min-w-0">
+          <h2 className="hd-h3 mb-1.5">Global settings</h2>
+          <p className="text-sm text-charcoal mb-4">Real-time enforcement controls. These apply instantly to all active participants.</p>
+
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
+            <div className="bg-lilac-soft border-2 border-ink p-3 rounded-lg text-center">
+              <div className="hd-label text-muted mb-1">Active Teams</div>
+              <div className="hd-display text-2xl">{data.stats?.activeTeams || 0}</div>
             </div>
-            <div className="bg-[#151838] p-3 rounded text-center">
-              <div className="text-slate-400 text-xs uppercase mb-1">Global Tab Switches</div>
-              <div className="text-xl font-bold">{data.stats?.totalTabSwitches || 0}</div>
+            <div className="bg-sand border-2 border-ink p-3 rounded-lg text-center">
+              <div className="hd-label text-muted mb-1">Global Tab Switches</div>
+              <div className="hd-display text-2xl">{data.stats?.totalTabSwitches || 0}</div>
             </div>
           </div>
-          
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between p-4 bg-[#151838] rounded-lg">
-              <div>
-                <div className="font-bold mb-1">Strict Screen Protection</div>
-                <div className="text-xs text-slate-400">Activates black screen deterrent on focus loss and enforces fullscreen mode.</div>
+
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-4 p-4 bg-paper border-2 border-[var(--border-subtle)] rounded-lg">
+              <div className="min-w-0">
+                <div className="font-bold mb-1 flex flex-wrap items-center gap-2">
+                  Strict Screen Protection
+                  <span className={`hd-badge ${strictMode ? 'hd-badge-ok' : 'hd-badge-muted'}`}>{strictMode ? 'On' : 'Off'}</span>
+                </div>
+                <div className="text-xs text-charcoal">Activates black screen deterrent on focus loss and enforces fullscreen mode.</div>
               </div>
-              <button 
+              <button
                 onClick={toggleStrictMode}
                 disabled={isUpdatingSettings}
-                className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${strictMode ? 'bg-emerald-500' : 'bg-slate-600'} ${isUpdatingSettings ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                role="switch"
+                aria-checked={!!strictMode}
+                aria-label="Strict Screen Protection"
+                className={`relative shrink-0 inline-flex h-8 w-16 items-center rounded-full border-2 border-ink transition-colors ${strictMode ? 'bg-ok' : 'bg-sand'} ${isUpdatingSettings ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <span className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${strictMode ? 'translate-x-9' : 'translate-x-1'}`} />
+                <span className={`inline-block h-6 w-6 transform rounded-full bg-paper border-2 border-ink transition-transform ${strictMode ? 'translate-x-8' : 'translate-x-0.5'}`} />
               </button>
             </div>
-            
-            <div className="flex items-center justify-between p-4 bg-[#151838] rounded-lg">
-              <div>
-                <div className="font-bold mb-1">Copy-Paste Blocker</div>
-                <div className="text-xs text-slate-400">Prevents pasting code into the IDE editor.</div>
+
+            <div className="flex items-center justify-between gap-4 p-4 bg-paper border-2 border-[var(--border-subtle)] rounded-lg">
+              <div className="min-w-0">
+                <div className="font-bold mb-1 flex flex-wrap items-center gap-2">
+                  Copy-Paste Blocker
+                  <span className={`hd-badge ${copyPasteBlocker ? 'hd-badge-ok' : 'hd-badge-muted'}`}>{copyPasteBlocker ? 'On' : 'Off'}</span>
+                </div>
+                <div className="text-xs text-charcoal">Prevents pasting code into the IDE editor.</div>
               </div>
-              <button 
+              <button
                 onClick={toggleCopyPaste}
                 disabled={isUpdatingSettings}
-                className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${copyPasteBlocker ? 'bg-emerald-500' : 'bg-slate-600'} ${isUpdatingSettings ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                role="switch"
+                aria-checked={!!copyPasteBlocker}
+                aria-label="Copy-Paste Blocker"
+                className={`relative shrink-0 inline-flex h-8 w-16 items-center rounded-full border-2 border-ink transition-colors ${copyPasteBlocker ? 'bg-ok' : 'bg-sand'} ${isUpdatingSettings ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <span className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${copyPasteBlocker ? 'translate-x-9' : 'translate-x-1'}`} />
+                <span className={`inline-block h-6 w-6 transform rounded-full bg-paper border-2 border-ink transition-transform ${copyPasteBlocker ? 'translate-x-8' : 'translate-x-0.5'}`} />
               </button>
             </div>
-            
-            <div className="flex items-center justify-between p-4 bg-[#151838] rounded-lg">
-              <div>
+
+            <div className="flex items-center justify-between gap-4 p-4 bg-paper border-2 border-[var(--border-subtle)] rounded-lg">
+              <div className="min-w-0">
                 <div className="font-bold mb-1">Max Tab Switches</div>
-                <div className="text-xs text-slate-400">Auto-locks submissions if participant exceeds this limit.</div>
+                <div className="text-xs text-charcoal">Auto-locks submissions if participant exceeds this limit.</div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <input
                   type="number"
                   min="1"
-                  className="w-16 px-2 py-1 bg-[#0c0d21] border border-[#1e1e3a] rounded text-sm text-center focus:outline-none focus:border-purple-500 disabled:opacity-50"
+                  aria-label="Max Tab Switches"
+                  className="hd-input w-20 text-center font-mono"
                   value={localMaxTabs}
                   disabled={isUpdatingSettings}
                   onChange={(e) => setLocalMaxTabs(parseInt(e.target.value) || '')}
@@ -268,126 +282,137 @@ function IntegrityContent() {
         </div>
       </div>
 
-      <div className="bg-[#0d0e24] border border-[#1e224d] rounded-xl overflow-hidden mb-8">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-[#151838] text-slate-300 font-mono text-xs uppercase">
+      <div className="hd-card overflow-hidden mb-8 min-w-0">
+        <div className="px-5 py-4 border-b-2 border-ink bg-sand flex flex-wrap justify-between items-center gap-2">
+          <h3 className="hd-label text-ink">Participant away sessions</h3>
+          <span className="hd-badge hd-badge-ok">
+            <span className="hd-dot hd-pulse-dot" />
+            Live
+          </span>
+        </div>
+        <div className="overflow-x-auto">
+        <table className="hd-table min-w-[640px] text-left text-sm">
+          <thead>
             <tr>
-              <th className="px-6 py-4">Participant</th>
-              <th className="px-6 py-4">Sessions</th>
-              <th className="px-6 py-4">Total Away</th>
-              <th className="px-6 py-4">Longest</th>
-              <th className="px-6 py-4">Status</th>
+              <th className="px-6">Participant</th>
+              <th className="px-6">Sessions</th>
+              <th className="px-6">Total Away</th>
+              <th className="px-6">Longest</th>
+              <th className="px-6">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#1e224d]">
+          <tbody>
             {(data.participants || []).map((p: any) => {
               const isSelected = selectedParticipant?._id === p._id;
               return (
                 <React.Fragment key={p._id}>
-                  <tr 
+                  <tr
                     onClick={() => setSelectedParticipant(isSelected ? null : p)}
-                    className={`cursor-pointer transition-colors ${isSelected ? 'bg-purple-500/20' : 'hover:bg-slate-800/50'}`}
+                    className={`cursor-pointer transition-colors ${isSelected ? 'bg-lilac hover:bg-lilac' : ''}`}
                   >
-                    <td className="px-6 py-4 font-medium flex items-center gap-2">
-                      {p.userId?.username || p.userId?.name || 'Unknown'}
-                      {p.currentlyAway && (
-                        <span className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                        </span>
-                      )}
+                    <td className="px-6 font-bold">
+                      <span className="flex items-center gap-2">
+                        {p.userId?.username || p.userId?.name || 'Unknown'}
+                        {p.currentlyAway && (
+                          <span className="flex h-2.5 w-2.5 relative">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bad opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-bad border border-ink"></span>
+                          </span>
+                        )}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-300">{p.awaySessionCount}</td>
-                    <td className="px-6 py-4 text-slate-300">{formatDuration(p.totalAwayTimeMs)}</td>
-                    <td className="px-6 py-4 text-slate-300">{formatDuration(p.longestAwaySessionMs)}</td>
-                    <td className="px-6 py-4"><StatusBadge status={p.currentStatus} /></td>
+                    <td className="px-6 font-mono text-charcoal">{p.awaySessionCount}</td>
+                    <td className="px-6 font-mono text-charcoal">{formatDuration(p.totalAwayTimeMs)}</td>
+                    <td className="px-6 font-mono text-charcoal">{formatDuration(p.longestAwaySessionMs)}</td>
+                    <td className="px-6"><StatusBadge status={p.currentStatus} /></td>
                   </tr>
-                  
+
                   {isSelected && (
-                    <tr>
-                      <td colSpan={5} className="p-0 border-b-4 border-purple-500">
-                        <div className="bg-[#11132f] p-6 shadow-inner animate-in fade-in slide-in-from-top-2 duration-200">
-                          <div className="flex flex-col xl:flex-row gap-8">
-                            
+                    <tr className="hover:bg-transparent">
+                      <td colSpan={5} className="p-0 border-b-4 border-ink">
+                        <div className="bg-cream p-4 sm:p-6 border-t-2 border-ink hd-fade">
+                          <div className="flex flex-col xl:flex-row gap-6 xl:gap-8">
+
                             {/* Left Side: Stats & Actions */}
-                            <div className="xl:w-1/3 flex flex-col gap-6">
+                            <div className="xl:w-1/3 flex flex-col gap-6 min-w-0">
                               <div>
-                                <div className="flex items-center gap-3 mb-4">
-                                  <h3 className="text-lg font-bold text-white">{p.userId?.username} Detailed Review</h3>
+                                <div className="flex flex-wrap items-center gap-3 mb-4">
+                                  <h3 className="hd-h3 text-ink break-words">{p.userId?.username} Detailed Review</h3>
                                   {p.currentlyAway && (
-                                    <div className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-1 rounded text-[10px] uppercase font-bold animate-pulse">
-                                      🚨 Currently Away
+                                    <div className="hd-badge hd-badge-bad">
+                                      <span className="hd-dot hd-pulse-dot" />
+                                      Currently Away
                                     </div>
                                   )}
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 text-sm">
-                                  <div className="bg-[#151838] p-3 rounded border border-slate-800">
-                                    <div className="text-slate-400 text-xs uppercase mb-1">Away Sessions</div>
-                                    <div className="font-bold text-white text-lg">{p.awaySessionCount}</div>
+                                  <div className="bg-paper p-3 rounded-lg border-2 border-ink">
+                                    <div className="hd-label text-muted mb-1">Away Sessions</div>
+                                    <div className="hd-display text-ink text-xl">{p.awaySessionCount}</div>
                                   </div>
-                                  <div className="bg-[#151838] p-3 rounded border border-slate-800">
-                                    <div className="text-slate-400 text-xs uppercase mb-1">Total Away</div>
-                                    <div className="font-bold text-white text-lg">{formatDuration(p.totalAwayTimeMs)}</div>
+                                  <div className="bg-paper p-3 rounded-lg border-2 border-ink">
+                                    <div className="hd-label text-muted mb-1">Total Away</div>
+                                    <div className="hd-display text-ink text-xl">{formatDuration(p.totalAwayTimeMs)}</div>
                                   </div>
-                                  <div className="bg-[#151838] p-3 rounded border border-slate-800">
-                                    <div className="text-slate-400 text-xs uppercase mb-1">Longest Session</div>
-                                    <div className="font-bold text-white text-lg">{formatDuration(p.longestAwaySessionMs)}</div>
+                                  <div className="bg-paper p-3 rounded-lg border-2 border-ink">
+                                    <div className="hd-label text-muted mb-1">Longest Session</div>
+                                    <div className="hd-display text-ink text-xl">{formatDuration(p.longestAwaySessionMs)}</div>
                                   </div>
-                                  <div className="bg-[#151838] p-3 rounded border border-slate-800">
-                                    <div className="text-slate-400 text-xs uppercase mb-1">Fullscreen Exits</div>
-                                    <div className="font-bold text-white text-lg">{p.fullscreenExitCount}</div>
+                                  <div className="bg-paper p-3 rounded-lg border-2 border-ink">
+                                    <div className="hd-label text-muted mb-1">Fullscreen Exits</div>
+                                    <div className="hd-display text-ink text-xl">{p.fullscreenExitCount}</div>
                                   </div>
                                 </div>
                               </div>
-                              
-                              <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-800 flex flex-col gap-3">
-                                <h4 className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Admin Actions</h4>
+
+                              <div className="bg-paper p-4 rounded-lg border-2 border-ink flex flex-col gap-3">
+                                <h4 className="hd-label text-ink mb-1">Admin Actions</h4>
                                 <div className="flex flex-wrap gap-2">
-                                  <button 
+                                  <button
                                     onClick={() => handleAction('MARK_REVIEWED')}
-                                    className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 font-medium rounded text-sm transition-colors text-white whitespace-nowrap"
+                                    className="hd-btn hd-btn-ok hd-btn-sm flex-1"
                                   >
                                     ✓ Mark Reviewed
                                   </button>
                                   {p.isSubmissionsLocked ? (
-                                    <button 
+                                    <button
                                       onClick={() => handleAction('RELEASE_SUBMISSIONS')}
-                                      className="flex-1 py-2 px-3 bg-slate-600 hover:bg-slate-700 font-medium rounded text-sm transition-colors text-white whitespace-nowrap"
+                                      className="hd-btn hd-btn-sm flex-1"
                                     >
-                                      🔓 Release Submissions
+                                      Release Submissions
                                     </button>
                                   ) : (
-                                    <button 
+                                    <button
                                       onClick={() => {
                                         const reason = prompt('Reason for locking submissions:');
                                         if (reason !== null) handleAction('LOCK_SUBMISSIONS', reason);
                                       }}
-                                      className="flex-1 py-2 px-3 border border-red-500/50 text-red-400 hover:bg-red-500/10 font-medium rounded text-sm transition-colors whitespace-nowrap"
+                                      className="hd-btn hd-btn-warn hd-btn-sm flex-1"
                                     >
-                                      🔒 Lock Submissions
+                                      Lock Submissions
                                     </button>
                                   )}
                                 </div>
-                                <div className="mt-2 border-t border-slate-800 pt-3">
+                                <div className="mt-2 border-t border-[var(--border-subtle)] pt-3">
                                   {p.userId?.teamId?.status === 'DISQUALIFIED' ? (
-                                    <button 
+                                    <button
                                       onClick={() => {
                                         if (window.confirm('Are you sure you want to RE-ADMIT this team?')) {
                                           handleAction('READMIT');
                                         }
                                       }}
-                                      className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded text-sm transition-colors"
+                                      className="hd-btn hd-btn-lilac hd-btn-sm hd-btn-block"
                                     >
                                       Re-admit Team
                                     </button>
                                   ) : (
-                                    <button 
+                                    <button
                                       onClick={() => {
                                         if (window.confirm('Are you sure you want to DISQUALIFY this team? They will be permanently locked out of the contest.')) {
                                           handleAction('DISQUALIFY');
                                         }
                                       }}
-                                      className="w-full py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded text-sm transition-colors shadow-lg shadow-red-900/20"
+                                      className="hd-btn hd-btn-danger hd-btn-sm hd-btn-block"
                                     >
                                       ⚠ Disqualify Team
                                     </button>
@@ -395,51 +420,51 @@ function IntegrityContent() {
                                 </div>
                               </div>
                             </div>
-                            
+
                             {/* Right Side: Activity Logs */}
-                            <div className="xl:w-2/3 flex flex-col bg-[#0d0e24] border border-[#1e224d] rounded-lg overflow-hidden">
-                              <div className="bg-[#151838] px-4 py-3 border-b border-[#1e224d] flex justify-between items-center">
-                                <h4 className="text-sm font-bold text-slate-300">Detailed Activity Logs</h4>
-                                <span className="text-xs text-slate-500">{logs.length} events recorded</span>
+                            <div className="xl:w-2/3 flex flex-col bg-paper border-2 border-ink rounded-lg overflow-hidden min-w-0">
+                              <div className="bg-ink text-cream px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+                                <h4 className="hd-label text-cream">Detailed Activity Logs</h4>
+                                <span className="font-mono text-xs text-cream/70">{logs.length} events recorded</span>
                               </div>
-                              <div className="p-4 flex-1 overflow-y-auto max-h-[400px] custom-scrollbar bg-[#0d0e24]">
+                              <div className="p-3 sm:p-4 flex-1 overflow-y-auto max-h-[400px] custom-scrollbar bg-paper">
                                 {isLogsLoading ? (
-                                  <div className="flex items-center justify-center h-full text-slate-500">Loading activity...</div>
+                                  <div className="flex items-center justify-center h-full hd-label text-muted py-6">Loading activity...</div>
                                 ) : logs.length > 0 ? (
-                                  <div className="space-y-3">
+                                  <div className="space-y-2.5">
                                     {logs.map((log) => (
-                                      <div key={log._id} className="flex gap-4 p-3 bg-[#151838] rounded-lg border border-slate-800 hover:border-slate-600 transition-colors">
-                                        <div className="flex-shrink-0 w-24 text-xs text-slate-400 font-mono pt-1">
+                                      <div key={log._id} className="flex flex-col sm:flex-row gap-1.5 sm:gap-4 p-3 bg-cream rounded-lg border border-[var(--border-subtle)] hover:border-ink transition-colors">
+                                        <div className="flex-shrink-0 sm:w-24 text-xs text-muted font-mono sm:pt-0.5">
                                           {new Date(log.timestamp).toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                                         </div>
-                                        <div className="flex-1">
-                                          <div className="flex items-center gap-2 mb-1">
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex flex-wrap items-center gap-2 mb-1">
                                             {log.type === 'AWAY_SESSION_END' ? (
-                                              <span className="text-emerald-400 font-medium text-sm">Returned to IDE</span>
+                                              <span className="text-[#0f5b31] font-bold text-sm">Returned to IDE</span>
                                             ) : log.type === 'AWAY_SESSION_START' ? (
-                                              <span className="text-orange-400 font-medium text-sm">Left IDE</span>
+                                              <span className="text-[#8f1a10] font-bold text-sm">Left IDE</span>
                                             ) : log.type === 'ADMIN_ACTION' ? (
-                                              <span className="text-purple-400 font-medium text-sm">Admin Action</span>
+                                              <span className="text-ink font-bold text-sm">Admin Action</span>
                                             ) : (
-                                              <span className="text-slate-300 font-medium text-sm">{log.type}</span>
+                                              <span className="text-charcoal font-bold text-sm">{log.type}</span>
                                             )}
-                                            
+
                                             {log.type === 'AWAY_SESSION_END' && log.durationMs > 0 && (
-                                              <span className="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">
+                                              <span className="hd-badge hd-badge-muted">
                                                 Away for {formatDuration(log.durationMs)}
                                               </span>
                                             )}
                                             {log.severity && log.severity !== 'NONE' && (
-                                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${log.severity === 'CRITICAL' ? 'bg-red-500/20 text-red-400' : 'bg-orange-500/20 text-orange-400'}`}>
+                                              <span className={`hd-badge ${log.severity === 'CRITICAL' ? 'hd-badge-bad' : 'hd-badge-warn'}`}>
                                                 {log.severity}
                                               </span>
                                             )}
                                           </div>
-                                          
+
                                           {(log.reasons?.length > 0 || log.details) && (
-                                            <div className="text-sm text-slate-300">
+                                            <div className="text-sm text-charcoal">
                                               {log.details ? (
-                                                <span className="italic">{log.details}</span>
+                                                <span className="italic break-words">{log.details}</span>
                                               ) : (
                                                 <div className="flex flex-wrap gap-2 mt-1">
                                                   {log.reasons.map((r: string, idx: number) => {
@@ -449,8 +474,8 @@ function IntegrityContent() {
                                                       'FULLSCREEN_EXIT': 'Exited Fullscreen',
                                                     };
                                                     return (
-                                                      <span key={idx} className="inline-flex items-center gap-1.5 text-xs text-slate-300 bg-[#1e224d] px-2 py-1 rounded">
-                                                        <span className="text-purple-400">🔍</span> {map[r] || r}
+                                                      <span key={idx} className="hd-badge hd-badge-lilac">
+                                                        {map[r] || r}
                                                       </span>
                                                     );
                                                   })}
@@ -463,16 +488,16 @@ function IntegrityContent() {
                                     ))}
                                   </div>
                                 ) : (
-                                  <div className="flex flex-col items-center justify-center h-full text-slate-500 gap-2">
-                                    <svg className="w-8 h-8 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <div className="flex flex-col items-center justify-center h-full text-muted gap-2 py-6">
+                                    <svg className="w-8 h-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
-                                    <span>No activity recorded.</span>
+                                    <span className="hd-label">No activity recorded.</span>
                                   </div>
                                 )}
                               </div>
                             </div>
-                            
+
                           </div>
                         </div>
                       </td>
@@ -483,11 +508,12 @@ function IntegrityContent() {
             })}
             {(data.participants || []).length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">No participants tracked yet.</td>
+                <td colSpan={5} className="px-6 py-12 text-center text-muted">No participants tracked yet.</td>
               </tr>
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </AdminLayout>
   );

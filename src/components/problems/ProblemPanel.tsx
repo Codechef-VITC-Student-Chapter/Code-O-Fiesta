@@ -51,20 +51,20 @@ export default function ProblemPanel({
     switch (difficulty) {
       case 'easy':
         return (
-          <span className="px-2.5 py-0.5 rounded border border-green-500/20 bg-green-500/5 text-green-400 text-[10px] font-mono font-bold uppercase select-none">
+          <span className="hd-badge hd-badge-ok select-none">
             Easy
           </span>
         );
       case 'hard':
         return (
-          <span className="px-2.5 py-0.5 rounded border border-red-500/20 bg-red-500/5 text-red-400 text-[10px] font-mono font-bold uppercase select-none">
+          <span className="hd-badge hd-badge-bad select-none">
             Hard
           </span>
         );
       case 'medium':
       default:
         return (
-          <span className="px-2.5 py-0.5 rounded border border-amber-500/20 bg-amber-500/5 text-amber-400 text-[10px] font-mono font-bold uppercase select-none">
+          <span className="hd-badge hd-badge-warn select-none">
             Medium
           </span>
         );
@@ -75,21 +75,21 @@ export default function ProblemPanel({
   const pointsLabel = points ? `+${points} PTS` : '+50 PTS';
 
   return (
-    <div className="flex flex-col h-full bg-[#060610] border-r border-[var(--border)] select-none">
+    <div className="flex flex-col h-full bg-paper text-ink select-none">
       {/* Header Info */}
-      <div className="p-5 border-b border-[var(--border-subtle)] flex flex-col gap-3">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-2.5">
-            <span className="flex items-center justify-center h-6 w-8 rounded bg-purple-500/10 border border-purple-500/30 text-xs font-mono font-bold text-purple-400">
+      <div className="px-4 sm:px-5 py-4 border-b-2 border-ink flex flex-col gap-3">
+        <div className="flex flex-wrap justify-between items-start gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            <span className="flex items-center justify-center h-8 min-w-10 px-1.5 shrink-0 rounded-[var(--radius-sm)] bg-brand border-2 border-ink text-xs font-mono font-bold text-ink">
               01
             </span>
-            <h2 className="text-sm font-bold font-mono text-white tracking-wide select-text">
+            <h2 className="hd-h3 !text-xl sm:!text-2xl text-ink select-text break-words min-w-0">
               {title}
             </h2>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             {getDifficultyBadge()}
-            <span className="px-2.5 py-0.5 rounded border border-green-500/20 bg-green-500/5 text-green-400 text-[10px] font-mono font-bold uppercase">
+            <span className="hd-badge hd-badge-ink tabular-nums">
               {pointsLabel}
             </span>
           </div>
@@ -97,7 +97,7 @@ export default function ProblemPanel({
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[var(--border-subtle)] bg-[#080814] h-10 select-none">
+      <div className="flex border-b-2 border-ink bg-sand h-11 select-none overflow-x-auto">
         {([
           { id: 'statement', label: 'Statement' },
           { id: 'examples', label: 'Examples' },
@@ -110,10 +110,10 @@ export default function ProblemPanel({
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               type="button"
-              className={`flex-1 text-center font-mono text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${
+              className={`flex-1 min-w-max px-3 text-center font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] transition-colors cursor-pointer border-r border-[var(--border-subtle)] last:border-r-0 ${
                 isActive
-                  ? 'border-purple-500 text-white bg-purple-500/5'
-                  : 'border-transparent text-[var(--text-muted)] hover:text-slate-200'
+                  ? 'bg-paper text-ink shadow-[inset_0_-3px_0_var(--brand)]'
+                  : 'text-muted hover:text-ink hover:bg-paper/60'
               }`}
             >
               {tab.label}
@@ -123,7 +123,7 @@ export default function ProblemPanel({
       </div>
 
       {/* Content Area */}
-      <div className="flex-grow p-5 overflow-y-auto custom-scrollbar">
+      <div className="flex-grow px-4 py-5 sm:px-6 overflow-y-auto custom-scrollbar">
         {activeTab === 'statement' && (
           hideProblemStatement ? (
             <ProblemHiddenOverlay />
@@ -131,7 +131,7 @@ export default function ProblemPanel({
             <>
               <ProblemStatement statement={statement} mode={mode} activeConstraints={activeConstraints} />
               {mode === 'constraint' && (
-                <div className="mt-2 pb-4 border-t border-[var(--border-subtle)]">
+                <div className="mt-2 pt-4 pb-4 border-t-2 border-ink">
                   <ConstraintPanel
                     isSolved={isSolved}
                     submitResult={submitResult}

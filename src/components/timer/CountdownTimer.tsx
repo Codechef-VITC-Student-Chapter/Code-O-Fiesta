@@ -35,27 +35,27 @@ function splitDuration(ms: number) {
 const pad2 = (n: number) => n.toString().padStart(2, '0');
 
 const STATE_RING_COLOR: Record<TimerVisualState, string> = {
-  NORMAL: '#8b5cf6',
-  WARNING: '#f59e0b',
-  CRITICAL: '#f43f5e',
-  EXPIRED: '#64748b',
-  PAUSED: '#64748b',
-  LOCKED: '#64748b',
+  NORMAL: 'var(--brand)',
+  WARNING: 'var(--warn)',
+  CRITICAL: 'var(--bad)',
+  EXPIRED: 'var(--faint)',
+  PAUSED: 'var(--faint)',
+  LOCKED: 'var(--faint)',
 };
 
 const STATE_TEXT_CLASS: Record<TimerVisualState, string> = {
-  NORMAL: 'text-white',
-  WARNING: 'text-amber-400',
-  CRITICAL: 'text-rose-400 animate-pulse',
-  EXPIRED: 'text-[var(--text-muted)]',
-  PAUSED: 'text-[var(--text-secondary)]',
-  LOCKED: 'text-[var(--text-muted)]',
+  NORMAL: 'text-ink',
+  WARNING: 'text-[#8a5b00]',
+  CRITICAL: 'text-bad animate-pulse',
+  EXPIRED: 'text-muted',
+  PAUSED: 'text-charcoal',
+  LOCKED: 'text-muted',
 };
 
 const SIZE_CONFIG: Record<'sm' | 'md' | 'lg', { wrapper: string; digit: string; seconds: string; label: string; ring: number }> = {
-  sm: { wrapper: 'w-28 h-28', digit: 'text-lg', seconds: 'text-[10px]', label: 'text-[8px]', ring: 8 },
-  md: { wrapper: 'w-40 h-40', digit: 'text-2xl', seconds: 'text-xs', label: 'text-[9px]', ring: 9 },
-  lg: { wrapper: 'w-56 h-56', digit: 'text-4xl', seconds: 'text-base', label: 'text-[10px]', ring: 10 },
+  sm: { wrapper: 'w-28 h-28', digit: 'text-xl', seconds: 'text-[11px]', label: 'text-[9px]', ring: 9 },
+  md: { wrapper: 'w-40 h-40', digit: 'text-3xl', seconds: 'text-sm', label: 'text-[10px]', ring: 10 },
+  lg: { wrapper: 'w-56 h-56', digit: 'text-5xl', seconds: 'text-lg', label: 'text-[11px]', ring: 11 },
 };
 
 const RADIUS = 90;
@@ -130,19 +130,21 @@ export default function CountdownTimer({
   return (
     <div className={`flex flex-col items-center gap-3 ${className}`}>
       {label && (
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[var(--text-muted)]">
+        <span className="hd-label text-ink">
           {label}
         </span>
       )}
 
       <div className={`relative ${sizeConfig.wrapper}`} role="timer" aria-live="polite" aria-label={fullText}>
-        <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
+        <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90" aria-hidden="true">
+          <circle cx="100" cy="100" r="98" fill="var(--paper)" stroke="var(--ink)" strokeWidth="3" />
+          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--border-subtle)" strokeWidth="1.5" />
           <circle
             cx="100"
             cy="100"
             r={RADIUS}
             fill="none"
-            stroke="var(--surface-secondary)"
+            stroke="var(--sand)"
             strokeWidth={sizeConfig.ring}
           />
           {!isBlank && (
@@ -153,38 +155,37 @@ export default function CountdownTimer({
               fill="none"
               stroke={ringColor}
               strokeWidth={sizeConfig.ring}
-              strokeLinecap="round"
+              strokeLinecap="butt"
               strokeDasharray={CIRCUMFERENCE}
               strokeDashoffset={dashOffset}
               className="transition-[stroke-dashoffset] duration-1000 ease-linear"
-              style={{ filter: `drop-shadow(0 0 6px ${ringColor}aa)` }}
             />
           )}
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-          <div className="flex items-baseline gap-2.5">
-            <span className={`font-mono font-extrabold tabular-nums ${sizeConfig.digit} ${textClass}`}>
+          <div className="flex items-baseline gap-1.5">
+            <span className={`font-mono font-bold tabular-nums leading-none tracking-tight ${sizeConfig.digit} ${textClass}`}>
               {isBlank ? '--' : pad2(hours)}
             </span>
-            <span className={`font-mono font-extrabold ${sizeConfig.digit} ${textClass}`}>:</span>
-            <span className={`font-mono font-extrabold tabular-nums ${sizeConfig.digit} ${textClass}`}>
+            <span className={`font-mono font-bold leading-none ${sizeConfig.digit} ${textClass} opacity-60`}>:</span>
+            <span className={`font-mono font-bold tabular-nums leading-none tracking-tight ${sizeConfig.digit} ${textClass}`}>
               {isBlank ? '--' : pad2(minutes)}
             </span>
           </div>
-          <span className={`font-mono font-bold tabular-nums ${sizeConfig.seconds} ${textClass} opacity-80`}>
+          <span className={`mt-1 px-1.5 rounded-sm bg-ink text-cream font-mono font-bold tabular-nums ${sizeConfig.seconds}`}>
             {isBlank ? '--' : pad2(seconds)}
           </span>
         </div>
       </div>
 
-      <div className={`flex gap-6 font-mono font-bold uppercase tracking-widest text-[var(--text-muted)] ${sizeConfig.label}`}>
+      <div className={`flex gap-6 font-mono uppercase tracking-widest text-muted ${sizeConfig.label}`}>
         <span className="w-8 text-center">Hrs</span>
         <span className="w-8 text-center">Min</span>
       </div>
 
       {visualState === 'LOCKED' && (
-        <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Locked</span>
+        <span className="hd-badge hd-badge-muted">Locked</span>
       )}
     </div>
   );

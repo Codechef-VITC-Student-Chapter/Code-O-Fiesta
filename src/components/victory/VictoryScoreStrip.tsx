@@ -17,34 +17,32 @@ export default function VictoryScoreStrip({
     {
       label: 'FINAL SCORE',
       value: `${finalScore} PTS`,
-      valueColor: 'text-purple-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)]',
-      borderHover: 'hover:border-purple-500/50',
+      valueColor: 'text-ink',
+      borderHover: 'hd-card-brand',
     },
     {
       label: 'ROUNDS DONE',
       value: roundsDone,
-      valueColor: 'text-white',
-      borderHover: 'hover:border-purple-500/40',
+      valueColor: 'text-ink',
+      borderHover: 'hd-card-lilac',
     },
     {
       label: 'TIME TAKEN',
       value: timeTaken,
-      valueColor: 'text-white',
-      borderHover: 'hover:border-purple-500/40',
+      valueColor: 'text-ink',
+      borderHover: 'hd-card',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
       {cards.map((card, idx) => (
         <div
           key={idx}
-          className={`bg-[#111120] border border-purple-600/25 rounded-xl p-5 flex flex-col justify-between gap-2 shadow-lg transition-all duration-300 ${card.borderHover}`}
+          className={`${card.borderHover} hd-card-interactive p-5 sm:p-6 flex flex-col justify-between gap-4 min-h-[8.5rem]`}
         >
-          <span className="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-[0.1em]">
-            {card.label}
-          </span>
-          <span className={`text-2xl sm:text-3xl font-mono font-extrabold tracking-tight ${card.valueColor}`}>
+          <span className="hd-label text-ink">{card.label}</span>
+          <span className={`hd-display text-4xl sm:text-5xl leading-none break-words ${card.valueColor}`}>
             {card.value}
           </span>
         </div>
