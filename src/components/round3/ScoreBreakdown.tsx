@@ -41,20 +41,20 @@ export default function ScoreBreakdown({ submitResult }: ScoreBreakdownProps) {
   const baseSolvePoints = Math.max(0, totalPoints - ouroborosPoints - shortPoints - oneShotPoints);
 
   return (
-    <div className="flex flex-col gap-2 p-3 bg-[#080814] border border-cyan-500/20 rounded-lg max-w-sm mt-3 font-mono text-[11px]">
-      <div className="text-cyan-400 font-bold uppercase tracking-wider text-[10px] mb-1">
+    <div className="flex flex-col gap-2 p-3 bg-sand border-2 border-ink rounded-[10px] max-w-sm mt-3 font-mono text-xs text-ink">
+      <div className="hd-label text-ink mb-1">
         Scoring Math (Crucible Round)
       </div>
-      <div className="flex items-center gap-1.5 text-slate-300 flex-wrap">
+      <div className="flex items-center gap-1.5 text-charcoal flex-wrap">
         <span>{baseSolvePoints} (Base: {submitResult.testsPassed}/{submitResult.totalTests} tests)</span>
         <span>+</span>
-        <span className={ouroborosViolated ? 'line-through text-red-500/60' : 'text-green-400'}>30 (Ouroboros)</span>
+        <span className={ouroborosViolated ? 'line-through text-muted' : 'text-[#0f5b31] font-bold'}>30 (Ouroboros)</span>
         <span>+</span>
-        <span className={shortViolated ? 'line-through text-red-500/60' : 'text-green-400'}>20 (Short)</span>
+        <span className={shortViolated ? 'line-through text-muted' : 'text-[#0f5b31] font-bold'}>20 (Short)</span>
         <span>+</span>
-        <span className={oneShotViolated ? 'line-through text-red-500/60' : 'text-green-400'}>40 (One-Shot)</span>
+        <span className={oneShotViolated ? 'line-through text-muted' : 'text-[#0f5b31] font-bold'}>40 (One-Shot)</span>
         <span>=</span>
-        <span className="text-white font-bold">{totalPoints} PTS</span>
+        <span className="bg-brand text-ink font-bold px-1.5 rounded-sm">{totalPoints} PTS</span>
       </div>
     </div>
   );
