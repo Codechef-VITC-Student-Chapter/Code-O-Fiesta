@@ -56,9 +56,8 @@ export default function StarfieldBackground({ starCount = 260, className = '' }:
     let frameId: number;
 
     const draw = () => {
-      // Deep purple-black base rather than plain black, so the whole scene
-      // reads as purple even where there are no stars.
-      ctx.fillStyle = '#0a0616';
+      // Warm cream paper base to match the light Hackday theme.
+      ctx.fillStyle = '#f5f3e9';
       ctx.fillRect(0, 0, width, height);
 
       const cx = width / 2;
@@ -85,11 +84,10 @@ export default function StarfieldBackground({ starCount = 260, className = '' }:
         const size = 0.6 + depthFraction * 2.4;
         const opacity = Math.min(1, 0.2 + depthFraction);
 
-        // Lavender/purple tint rather than plain white, brightening toward
-        // magenta-white as stars approach — keeps every star visibly purple.
-        const r = Math.round(180 + depthFraction * 60);
-        const g = Math.round(140 + depthFraction * 90);
-        const b = 255;
+        // Ink specks far away, warming toward the orange brand colour as they approach.
+        const r = Math.round(8 + depthFraction * 247);
+        const g = Math.round(8 + depthFraction * 72);
+        const b = Math.round(8 + depthFraction * 44);
         const color = `rgba(${r}, ${g}, ${b}, ${opacity})`;
 
         if (star.speed > STREAK_SPEED_THRESHOLD) {

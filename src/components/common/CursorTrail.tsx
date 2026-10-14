@@ -15,7 +15,7 @@ interface TrailPoint {
 
 const POINT_LIFETIME_MS = 1400;
 
-export default function CursorTrail({ color = '139, 92, 246', className = '' }: CursorTrailProps) {
+export default function CursorTrail({ color = '255, 80, 52', className = '' }: CursorTrailProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointsRef = useRef<TrailPoint[]>([]);
 
@@ -59,7 +59,7 @@ export default function CursorTrail({ color = '139, 92, 246', className = '' }: 
         ctx.lineWidth = Math.max(1, lifeFraction * 6);
         ctx.lineCap = 'round';
         ctx.shadowColor = `rgba(${color}, ${Math.max(0, lifeFraction)})`;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 0;
         ctx.stroke();
       }
 
