@@ -80,62 +80,62 @@ export default function VictoryRoundBreakdown({ rounds = DEFAULT_DETAILED_ROUNDS
   const getDifficultyBadge = (difficulty: 'EASY' | 'MEDIUM' | 'HARD') => {
     switch (difficulty) {
       case 'EASY':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        return 'hd-badge-ok';
       case 'MEDIUM':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+        return 'hd-badge-warn';
       case 'HARD':
-        return 'bg-rose-500/10 text-rose-400 border-rose-500/30';
+        return 'hd-badge-bad';
       default:
-        return 'bg-slate-800 text-slate-400 border-slate-700';
+        return 'hd-badge-muted';
     }
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-base sm:text-lg font-mono font-bold text-white uppercase tracking-wider">
-          ROUND PERFORMANCE BREAKDOWN
-        </h2>
-        <span className="text-xs font-mono text-slate-500">
+    <div className="flex flex-col gap-5 text-ink">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <h2 className="hd-h2">Round performance breakdown</h2>
+        <span className="hd-label text-muted">
           Click any round to expand
         </span>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         {rounds.map((round, rIndex) => {
           const isOpen = openRounds[round.id] ?? false;
 
           return (
             <div
               key={round.id || rIndex}
-              className="bg-[#111120] border border-purple-500/20 rounded-xl overflow-hidden shadow-md transition-all"
+              className="hd-card overflow-hidden"
             >
               {/* Accordion header */}
               <button
                 type="button"
                 onClick={() => toggleRound(round.id)}
-                className="w-full px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left hover:bg-[#151733] transition-colors cursor-pointer"
+                aria-expanded={isOpen}
+                className="w-full min-h-[3.5rem] px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left hover:bg-lilac-soft transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-3 font-mono">
+                <div className="flex items-center gap-3">
                   <span
-                    className={`text-purple-400 transform transition-transform duration-200 ${
+                    aria-hidden="true"
+                    className={`inline-flex w-7 h-7 items-center justify-center rounded-md border-2 border-ink bg-brand text-ink text-[10px] transform transition-transform duration-200 ${
                       isOpen ? 'rotate-90' : 'rotate-0'
                     }`}
                   >
                     ▶
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-white tracking-wide">
+                  <span className="font-display text-base sm:text-lg tracking-[-0.02em] text-ink">
                     {round.name}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 font-mono text-xs">
-                  <span className="text-purple-300 font-bold">
+                <div className="flex items-center gap-3 font-mono text-xs">
+                  <span className="font-bold text-ink">
                     {round.score} / {round.maxScore} PTS
                   </span>
                   {round.completed && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                      <span>✓</span>
+                    <span className="hd-badge hd-badge-ok">
+                      <span aria-hidden="true">✓</span>
                       <span>COMPLETE</span>
                     </span>
                   )}
@@ -144,58 +144,58 @@ export default function VictoryRoundBreakdown({ rounds = DEFAULT_DETAILED_ROUNDS
 
               {/* Accordion content */}
               {isOpen && (
-                <div className="border-t border-[#1e224d] bg-[#0c0d1c] p-4 sm:p-5 overflow-x-auto">
+                <div className="border-t-2 border-ink bg-cream overflow-x-auto">
                   {round.problems.length === 0 ? (
-                    <p className="text-xs text-slate-500 font-mono py-2">
+                    <p className="hd-label text-muted p-5">
                       Per-problem breakdown isn&apos;t available for this round.
                     </p>
                   ) : (
-                  <table className="w-full text-left font-mono text-xs">
+                  <table className="hd-table min-w-[620px]">
                     <thead>
-                      <tr className="text-[10px] text-slate-500 uppercase tracking-wider border-b border-[#1e224d] pb-2">
-                        <th className="pb-2.5 font-bold">#</th>
-                        <th className="pb-2.5 font-bold">PROBLEM TITLE</th>
-                        <th className="pb-2.5 font-bold">DIFFICULTY</th>
-                        <th className="pb-2.5 font-bold">STATUS</th>
-                        <th className="pb-2.5 font-bold text-right">BEST TIME</th>
-                        <th className="pb-2.5 font-bold text-right">POINTS</th>
+                      <tr>
+                        <th>#</th>
+                        <th>Problem title</th>
+                        <th>Difficulty</th>
+                        <th>Status</th>
+                        <th className="text-right">Best time</th>
+                        <th className="text-right">Points</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#181b3d]">
+                    <tbody>
                       {round.problems.map((prob, pIndex) => (
-                        <tr key={prob.id || pIndex} className="hover:bg-[#131535]/50 transition-colors">
-                          <td className="py-3 text-slate-500 font-bold">
+                        <tr key={prob.id || pIndex}>
+                          <td className="font-mono font-bold text-muted">
                             {String(pIndex + 1).padStart(2, '0')}
                           </td>
-                          <td className="py-3 font-semibold text-slate-200">
+                          <td className="font-semibold text-ink">
                             {prob.title}
                           </td>
-                          <td className="py-3">
+                          <td>
                             <span
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${getDifficultyBadge(
+                              className={`hd-badge ${getDifficultyBadge(
                                 prob.difficulty
                               )}`}
                             >
                               {prob.difficulty}
                             </span>
                           </td>
-                          <td className="py-3">
+                          <td>
                             {prob.solved ? (
-                              <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">
+                              <span className="hd-badge hd-badge-ok">
                                 SOLVED
                               </span>
                             ) : (
-                              <span className="text-slate-600 font-bold">—</span>
+                              <span className="text-faint font-bold">—</span>
                             )}
                           </td>
-                          <td className="py-3 text-right text-slate-400">
+                          <td className="text-right font-mono text-charcoal">
                             {prob.bestTimeMs ? `${prob.bestTimeMs}ms` : '—'}
                           </td>
-                          <td className="py-3 text-right font-bold">
+                          <td className="text-right font-mono font-bold">
                             {prob.solved ? (
-                              <span className="text-emerald-400">+{prob.points} pts</span>
+                              <span className="text-[#0f5b31]">+{prob.points} pts</span>
                             ) : (
-                              <span className="text-slate-600">0 pts</span>
+                              <span className="text-muted">0 pts</span>
                             )}
                           </td>
                         </tr>
