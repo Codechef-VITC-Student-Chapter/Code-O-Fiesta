@@ -12,20 +12,20 @@ export default function AdminNav() {
   ];
 
   return (
-    <nav className="flex items-center gap-6">
+    <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto -mx-1 px-1 pb-0.5">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
           <Link
             key={item.name}
             href={item.href}
-            className={`text-sm font-medium transition-colors relative py-2 ${
-              isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+            className={`relative shrink-0 whitespace-nowrap inline-flex items-center min-h-[2.5rem] px-3 rounded-lg font-mono text-[0.6875rem] font-bold uppercase tracking-[0.12em] border-2 transition-colors ${
+              isActive ? 'bg-ink text-cream border-ink' : 'border-transparent text-charcoal hover:bg-sand hover:border-ink'
             }`}
           >
             {item.name}
             {isActive && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 rounded-t-full shadow-[0_-2px_10px_rgba(168,85,247,0.5)]" />
+              <span aria-hidden="true" className="absolute -bottom-[2px] left-3 right-3 h-[3px] bg-brand rounded-full" />
             )}
           </Link>
         );
