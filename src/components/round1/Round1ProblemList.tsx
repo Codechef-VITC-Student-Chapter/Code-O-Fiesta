@@ -29,42 +29,40 @@ interface Round1ProblemListProps {
 
 const statusConfig: Record<
   ProblemStatus,
-  { label: string; color: string; bg: string; border: string }
+  { label: string; badge: string; card: string; index: string }
 > = {
   locked: {
     label: 'Locked',
-    color: 'text-slate-500',
-    bg: 'bg-slate-800/40',
-    border: 'border-slate-700/50',
+    badge: 'hd-badge-muted',
+    card: 'bg-sand',
+    index: 'bg-paper text-muted',
   },
   available: {
     label: 'Available',
-    color: 'text-cyan-400',
-    bg: 'bg-cyan-500/10',
-    border: 'border-cyan-500/30',
+    badge: 'hd-badge-lilac',
+    card: 'bg-paper',
+    index: 'bg-lilac text-ink',
   },
   attempted: {
     label: 'Attempted',
-    color: 'text-yellow-400',
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/30',
+    badge: 'hd-badge-warn',
+    card: 'bg-paper',
+    index: 'bg-warn-soft text-ink',
   },
   solved: {
     label: 'Solved',
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/30',
+    badge: 'hd-badge-ok',
+    card: 'bg-ok-soft',
+    index: 'bg-ink text-cream',
   },
 };
 
 function StatusBadge({ status }: { status: ProblemStatus }) {
   const cfg = statusConfig[status];
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${cfg.color} ${cfg.bg} border ${cfg.border}`}
-    >
+    <span className={`hd-badge ${cfg.badge}`}>
       {status === 'solved' && (
-        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
           <path
             fillRule="evenodd"
             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -89,15 +87,17 @@ export default function Round1ProblemList({
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-[#1e224d] bg-[#0d0e24] p-6 text-sm text-slate-400">
-        Loading your assigned problems...
+      <div className="hd-card-flat p-6 text-sm text-charcoal flex flex-col gap-3">
+        <span>Loading your assigned problems...</span>
+        <div className="hd-skeleton h-16 rounded-[14px]" />
+        <div className="hd-skeleton h-16 rounded-[14px]" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-sm text-red-200">
+      <div className="hd-alert hd-alert-bad p-6 text-sm text-ink">
         {error}
       </div>
     );
@@ -105,7 +105,7 @@ export default function Round1ProblemList({
 
   if (!problems.length) {
     return (
-      <div className="rounded-xl border border-[#1e224d] bg-[#0d0e24] p-6 text-sm text-slate-400">
+      <div className="hd-card-flat p-6 text-sm text-charcoal">
         No Round 1 problems have been assigned to your team yet.
       </div>
     );
@@ -114,32 +114,30 @@ export default function Round1ProblemList({
   return (
     <div className="flex flex-col gap-5">
       {/* Header strip */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="min-w-0">
           {pathLabel && (
-            <div className="text-[11px] font-mono text-purple-400 tracking-widest uppercase mb-1">
-              {pathLabel}
+            <div className="mb-2">
+              <span className="hd-badge hd-badge-brand">{pathLabel}</span>
             </div>
           )}
-          <h2 className="text-xl font-bold text-white">{topic}</h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <h2 className="hd-h2 text-ink break-words">{topic}</h2>
+          <p className="hd-label text-muted mt-2">
             Solve all {total} problems · Any order allowed
           </p>
         </div>
 
         {/* Progress pill */}
-        <div className="flex items-center gap-3 rounded-xl border border-[#1e224d] bg-[#0d0e24] px-4 py-2.5">
+        <div className="flex items-center gap-3 hd-card-flat px-4 py-2.5 self-start sm:self-auto">
           <div className="text-right">
-            <div className="text-[10px] uppercase tracking-wider text-slate-500">
-              Progress
-            </div>
-            <div className="text-sm font-bold text-white">
+            <div className="hd-label text-muted">Progress</div>
+            <div className="font-mono text-sm font-bold text-ink">
               {solvedCount} / {total}
             </div>
           </div>
-          <div className="w-20 h-2 rounded-full bg-[#1a1d42] overflow-hidden">
+          <div className="w-24 h-3 rounded-full border-2 border-ink bg-sand overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 transition-all duration-500"
+              className="h-full bg-brand transition-all duration-500"
               style={{ width: `${total > 0 ? (solvedCount / total) * 100 : 0}%` }}
             />
           </div>
@@ -155,63 +153,64 @@ export default function Round1ProblemList({
           const cardContent = (
             <div
               className={`
-                group relative flex items-center gap-4 rounded-xl border p-4
-                transition-all duration-200
-                ${cfg.border} ${cfg.bg}
-                ${isClickable ? 'hover:border-purple-500/50 hover:bg-[#131535] cursor-pointer' : 'opacity-60'}
+                relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-[14px] border-2 border-ink p-4
+                transition-[transform,box-shadow] duration-200
+                ${cfg.card}
+                ${isClickable ? 'shadow-hd-sm group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-hd cursor-pointer' : 'opacity-60'}
               `}
             >
-              {/* Index */}
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/30 border border-white/5 font-mono text-sm font-bold text-slate-400 group-hover:text-purple-300">
-                {String(idx + 1).padStart(2, '0')}
-              </div>
-
-              {/* Title + meta */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="text-sm font-semibold text-white truncate">
-                    {problem.title}
-                  </h3>
-                  {problem.difficulty && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400 border border-white/5">
-                      {problem.difficulty}
-                    </span>
-                  )}
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                {/* Index */}
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 border-ink font-mono text-sm font-bold ${cfg.index}`}>
+                  {String(idx + 1).padStart(2, '0')}
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-500">
-                  <span className={problem.earnedScore ? 'text-white font-semibold' : ''}>
-                    {problem.earnedScore ?? 0} / {problem.maxScore} pts
-                  </span>
-                  {!!problem.totalTests && (
-                    <span>
-                      {problem.testsPassed ?? 0} / {problem.totalTests} test cases passed
+
+                {/* Title + meta */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 min-w-0">
+                    <h3 className="text-base font-bold text-ink truncate">
+                      {problem.title}
+                    </h3>
+                    {problem.difficulty && (
+                      <span className="hd-badge shrink-0">{problem.difficulty}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
+                    <span className={problem.earnedScore ? 'text-ink font-bold' : ''}>
+                      {problem.earnedScore ?? 0} / {problem.maxScore} pts
                     </span>
-                  )}
-                  {problem.solvedAt && (
-                    <span className="text-emerald-500/80">
-                      Solved {problem.solvedAt}
-                    </span>
-                  )}
+                    {!!problem.totalTests && (
+                      <span>
+                        {problem.testsPassed ?? 0} / {problem.totalTests} test cases passed
+                      </span>
+                    )}
+                    {problem.solvedAt && (
+                      <span className="text-[#0f5b31]">Solved {problem.solvedAt}</span>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Status + arrow */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between sm:justify-end gap-3 pl-[3.75rem] sm:pl-0">
                 <StatusBadge status={problem.status} />
                 {isClickable && (
-                  <svg
-                    className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition-colors"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-paper transition-colors group-hover:bg-brand">
+                    <svg
+                      className="w-4 h-4 text-ink"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </span>
                 )}
               </div>
             </div>
@@ -222,7 +221,11 @@ export default function Round1ProblemList({
           }
 
           return (
-            <Link key={problem.id} href={`/round-1/problem/${problem.id}`}>
+            <Link
+              key={problem.id}
+              href={`/round-1/problem/${problem.id}`}
+              className="group block rounded-[14px]"
+            >
               {cardContent}
             </Link>
           );
