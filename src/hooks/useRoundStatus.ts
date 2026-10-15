@@ -1,10 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import { apiCall } from '@/lib/api';
+import { createSharedPoller } from '@/lib/sharedPoller';
 import { RoundStatus } from '@/constants/event';
-
-const POLL_INTERVAL_MS = 5000;
 
 export interface RoundStatusData {
   roundNumber: number;
@@ -15,6 +13,17 @@ export interface RoundStatusData {
   maxScore: number;
 }
 
+// One poller for all three rounds, shared by the navbar, the sidebar and every
+// round gate. GET /api/rounds/status returns the same data the per-round
+// endpoint does, so a single request covers every consumer.
+const roundsPoller = createSharedPoller(
+  async (): Promise<RoundStatusData[]> => {
+    const result = await apiCall('/api/rounds/status');
+    return result.rounds ?? [];
+  },
+  { intervalMs: 5000, errorMessage: 'Unable to load round status.' },
+);
+
 export interface UseRoundStatusResult {
   data: RoundStatusData | null;
   loading: boolean;
@@ -23,32 +32,14 @@ export interface UseRoundStatusResult {
 }
 
 export function useRoundStatus(roundNumber: number): UseRoundStatusResult {
-  const [data, setData] = useState<RoundStatusData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error } = roundsPoller.usePoller();
 
-  const refresh = useCallback(async () => {
-    try {
-      const result = await apiCall(`/api/rounds/${roundNumber}/status`);
-      setData(result);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to load round status.');
-    } finally {
-      setLoading(false);
-    }
-  }, [roundNumber]);
-
-  useEffect(() => {
-    const initialFetch = setTimeout(refresh, 0);
-    const interval = setInterval(refresh, POLL_INTERVAL_MS);
-    return () => {
-      clearTimeout(initialFetch);
-      clearInterval(interval);
-    };
-  }, [refresh]);
-
-  return { data, loading, error, refresh };
+  return {
+    data: data?.find((round) => round.roundNumber === roundNumber) ?? null,
+    loading,
+    error,
+    refresh: roundsPoller.refresh,
+  };
 }
 
 export interface UseAllRoundsStatusResult {
@@ -58,35 +49,8 @@ export interface UseAllRoundsStatusResult {
   refresh: () => Promise<void>;
 }
 
-// Bulk variant for the navbar — one poll covers all three rounds instead of
-// three separate useRoundStatus() pollers. Backed by the same
-// /api/rounds/[n]/status data (GET /api/rounds/status calls the identical
-// shared service function server-side).
 export function useAllRoundsStatus(): UseAllRoundsStatusResult {
-  const [rounds, setRounds] = useState<RoundStatusData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error } = roundsPoller.usePoller();
 
-  const refresh = useCallback(async () => {
-    try {
-      const result = await apiCall('/api/rounds/status');
-      setRounds(result.rounds ?? []);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to load round status.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const initialFetch = setTimeout(refresh, 0);
-    const interval = setInterval(refresh, POLL_INTERVAL_MS);
-    return () => {
-      clearTimeout(initialFetch);
-      clearInterval(interval);
-    };
-  }, [refresh]);
-
-  return { rounds, loading, error, refresh };
+  return { rounds: data ?? [], loading, error, refresh: roundsPoller.refresh };
 }

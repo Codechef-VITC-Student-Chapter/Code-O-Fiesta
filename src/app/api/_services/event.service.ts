@@ -1,7 +1,13 @@
 import connectDB from '@/lib/db';
 import Round from '@/models/Round';
 
-export async function getEventState() {
+import { ttlCached } from '../_lib/ttl-cache';
+
+// Display-only and identical for every user: every participant browser polls
+// this, so share one database read per couple of seconds per server instance.
+const EVENT_STATE_TTL_MS = 2000;
+
+async function loadEventState() {
   await connectDB();
 
   const rounds = await Round.find()
@@ -46,3 +52,5 @@ export async function getEventState() {
       : null,
   };
 }
+
+export const getEventState = ttlCached(EVENT_STATE_TTL_MS, loadEventState);

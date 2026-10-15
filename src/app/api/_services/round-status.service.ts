@@ -2,6 +2,8 @@ import connectDB from '@/lib/db';
 import Round from '@/models/Round';
 import { RoundStatus } from '@/constants/event';
 
+import { ttlCached } from '../_lib/ttl-cache';
+
 // Flat per-item point values already baked into the app's existing scoring
 // paths (see rounds/[roundNumber]/questions/route.ts and
 // submissions/[submissionId]/route.ts) — reused here, not reinvented, so the
@@ -55,7 +57,11 @@ const ROUND_NAMES: Record<number, string> = {
   3: 'Constraint Crucible',
 };
 
-export async function getAllRoundsStatus(): Promise<RoundStatusInfo[]> {
+// Display-only and identical for every user (the participant navbar and round
+// gates poll it). Enforcement uses isRoundActive() below, which is never cached.
+const ROUNDS_STATUS_TTL_MS = 2000;
+
+async function loadAllRoundsStatus(): Promise<RoundStatusInfo[]> {
   await connectDB();
   const rounds = await Round.find().lean();
   const roundMap = new Map(rounds.map((r) => [r.roundNumber, r]));
@@ -72,6 +78,8 @@ export async function getAllRoundsStatus(): Promise<RoundStatusInfo[]> {
     };
   });
 }
+
+export const getAllRoundsStatus = ttlCached(ROUNDS_STATUS_TTL_MS, loadAllRoundsStatus);
 
 export async function getRoundStatus(roundNumber: number): Promise<RoundStatusInfo> {
   const all = await getAllRoundsStatus();

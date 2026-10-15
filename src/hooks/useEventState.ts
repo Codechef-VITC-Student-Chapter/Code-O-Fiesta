@@ -1,10 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { createSharedPoller } from '@/lib/sharedPoller';
 import { eventService } from '@/services/event';
 import type { EventState } from '@/types/event';
-
-const POLL_INTERVAL_MS = 5000;
 
 const INITIAL_STATE: EventState = {
   eventStatus: 'UPCOMING',
@@ -18,6 +16,12 @@ const INITIAL_STATE: EventState = {
   currentProblem: null,
 };
 
+// One poller shared by every component that reads the event state.
+const eventPoller = createSharedPoller(() => eventService.getEventState(), {
+  intervalMs: 5000,
+  errorMessage: 'Unable to reach the event server.',
+});
+
 export interface UseEventStateResult extends EventState {
   loading: boolean;
   error: string | null;
@@ -25,30 +29,7 @@ export interface UseEventStateResult extends EventState {
 }
 
 export function useEventState(): UseEventStateResult {
-  const [state, setState] = useState<EventState>(INITIAL_STATE);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error } = eventPoller.usePoller();
 
-  const refresh = useCallback(async () => {
-    try {
-      const next = await eventService.getEventState();
-      setState(next);
-      setError(null);
-    } catch {
-      setError('Unable to reach the event server.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const initialFetch = setTimeout(refresh, 0);
-    const interval = setInterval(refresh, POLL_INTERVAL_MS);
-    return () => {
-      clearTimeout(initialFetch);
-      clearInterval(interval);
-    };
-  }, [refresh]);
-
-  return { ...state, loading, error, refresh };
+  return { ...(data ?? INITIAL_STATE), loading, error, refresh: eventPoller.refresh };
 }

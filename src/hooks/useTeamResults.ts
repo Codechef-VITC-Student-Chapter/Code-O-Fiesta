@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { apiCall } from '@/lib/api';
-
-const POLL_INTERVAL_MS = 15000;
+import { createSharedPoller } from '@/lib/sharedPoller';
 
 export interface TeamRoundResult {
   roundNumber: number;
@@ -35,31 +34,14 @@ export interface UseTeamResultsResult {
   refresh: () => Promise<void>;
 }
 
+// The top bar, round gate and page all read the team's results; share one poll.
+const resultsPoller = createSharedPoller<TeamResults>(() => apiCall('/api/results/me'), {
+  intervalMs: 15000,
+  errorMessage: 'Unable to load team results.',
+});
+
 export function useTeamResults(): UseTeamResultsResult {
-  const [results, setResults] = useState<TeamResults | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const refresh = useCallback(async () => {
-    try {
-      const data = await apiCall('/api/results/me');
-      setResults(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to load team results.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const initialFetch = setTimeout(refresh, 0);
-    const interval = setInterval(refresh, POLL_INTERVAL_MS);
-    return () => {
-      clearTimeout(initialFetch);
-      clearInterval(interval);
-    };
-  }, [refresh]);
+  const { data: results, loading, error } = resultsPoller.usePoller();
 
   const getRoundScore = useCallback(
     (roundNumber: number) =>
@@ -73,6 +55,6 @@ export function useTeamResults(): UseTeamResultsResult {
     getRoundScore,
     loading,
     error,
-    refresh,
+    refresh: resultsPoller.refresh,
   };
 }
