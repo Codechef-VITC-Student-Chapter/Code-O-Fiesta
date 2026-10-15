@@ -5,56 +5,110 @@ import Round from '@/models/Round';
 import Score from '@/models/Score';
 import { TeamStatus, RoundStatus, TeamRoundStatus } from '@/constants/event';
 
+const LEADERBOARD_CACHE_TTL_MS = 5000;
+
+type LeaderboardEntry = Awaited<ReturnType<typeof computeLeaderboard>>[number];
+
+const leaderboardCache = new Map<
+  boolean,
+  { value?: LeaderboardEntry[]; expiresAt: number; inflight?: Promise<LeaderboardEntry[]> }
+>();
+
+/**
+ * Standings for every non-disqualified team, ranked by total score.
+ *
+ * Cached for a few seconds per view and shared between concurrent callers, so
+ * any number of admin refreshes cost one computation per window.
+ */
 export async function getLeaderboard(adminView = false) {
+  const entry = leaderboardCache.get(adminView);
+
+  if (entry?.value && entry.expiresAt > Date.now()) return entry.value;
+  if (entry?.inflight) return entry.inflight;
+
+  const inflight = computeLeaderboard(adminView)
+    .then((value) => {
+      leaderboardCache.set(adminView, {
+        value,
+        expiresAt: Date.now() + LEADERBOARD_CACHE_TTL_MS,
+      });
+      return value;
+    })
+    .catch((err) => {
+      leaderboardCache.delete(adminView);
+      throw err;
+    });
+
+  leaderboardCache.set(adminView, { expiresAt: 0, inflight });
+  return inflight;
+}
+
+// Three bulk queries joined in memory, instead of two queries per team.
+async function computeLeaderboard(adminView: boolean) {
   await connectDB();
 
-  // Find all teams
   const teams = await Team.find({ status: { $ne: TeamStatus.DISQUALIFIED } }).lean();
-  
-  // Aggregate scores and times
-  const leaderboard = await Promise.all(
-    teams.map(async (team) => {
-      const teamRounds = await TeamRound.find({ teamId: team._id }).populate('roundId').lean();
-      const scores = await Score.find({ teamId: team._id }).lean();
-      
-      let totalScore = 0;
-      const roundScores: Record<number, number> = {};
-      const roundStatus: Record<number, string> = {};
-      
-      teamRounds.forEach(tr => {
-        const round = tr.roundId as any;
-        if (round && round.roundNumber) {
-          // Add TeamRound score if applicable
-          const trScore = tr.score || 0;
-          
-          // Check if there's a detailed Score model for this round (Round 3)
-          const detailedScore = scores.find(s => s.roundId.toString() === round._id.toString());
-          const finalRoundScore = detailedScore ? detailedScore.totalScore : trScore;
-          
-          roundScores[round.roundNumber] = finalRoundScore;
-          roundStatus[round.roundNumber] = tr.status;
-          totalScore += finalRoundScore;
-        }
-      });
-      
-      return {
-        teamId: team._id,
-        teamName: team.name,
-        totalScore,
-        roundScores,
-        completionInfo: roundStatus,
-        ...(adminView ? { teamCode: team.teamCode, status: team.status } : {})
-      };
-    })
-  );
+  const teamIds = teams.map((t) => t._id);
 
-  // Sort by total score descending
+  const [rounds, teamRounds, scores] = await Promise.all([
+    Round.find().select('roundNumber').lean(),
+    TeamRound.find({ teamId: { $in: teamIds } }).lean(),
+    Score.find({ teamId: { $in: teamIds } }).lean(),
+  ]);
+
+  const roundNumberById = new Map(rounds.map((r) => [r._id.toString(), r.roundNumber]));
+
+  const teamRoundsByTeam = new Map<string, typeof teamRounds>();
+  for (const tr of teamRounds) {
+    const key = tr.teamId.toString();
+    const list = teamRoundsByTeam.get(key);
+    if (list) list.push(tr);
+    else teamRoundsByTeam.set(key, [tr]);
+  }
+
+  const scoreByTeamRound = new Map<string, (typeof scores)[number]>();
+  for (const s of scores) {
+    const key = `${s.teamId.toString()}:${s.roundId.toString()}`;
+    if (!scoreByTeamRound.has(key)) scoreByTeamRound.set(key, s);
+  }
+
+  const leaderboard = teams.map((team) => {
+    const teamKey = team._id.toString();
+
+    let totalScore = 0;
+    const roundScores: Record<number, number> = {};
+    const roundStatus: Record<number, string> = {};
+
+    for (const tr of teamRoundsByTeam.get(teamKey) ?? []) {
+      const roundNumber = roundNumberById.get(tr.roundId.toString());
+      if (!roundNumber) continue;
+
+      // A detailed Score document (Round 3 and synced Round 1/2) wins over
+      // the TeamRound's own running score.
+      const detailedScore = scoreByTeamRound.get(`${teamKey}:${tr.roundId.toString()}`);
+      const finalRoundScore = detailedScore ? detailedScore.totalScore : tr.score || 0;
+
+      roundScores[roundNumber] = finalRoundScore;
+      roundStatus[roundNumber] = tr.status;
+      totalScore += finalRoundScore;
+    }
+
+    return {
+      teamId: team._id,
+      teamName: team.name,
+      totalScore,
+      roundScores,
+      completionInfo: roundStatus,
+      ...(adminView ? { teamCode: team.teamCode, status: team.status } : {}),
+    };
+  });
+
+  // Sort by total score descending (stable, so ties keep team order)
   leaderboard.sort((a, b) => b.totalScore - a.totalScore);
-  
-  // Add ranks
+
   return leaderboard.map((entry, index) => ({
     rank: index + 1,
-    ...entry
+    ...entry,
   }));
 }
 
@@ -88,17 +142,9 @@ export async function getTeamResults(teamId: string) {
     };
   });
 
-  // A team is only allowed to know its own rank, never the full standings —
-  // that view is admin-only. Derive it from the same ranking logic used by
-  // the admin leaderboard rather than exposing /api/leaderboard to participants.
-  let rank: number | null = null;
-  try {
-    const fullLeaderboard = await getLeaderboard(false);
-    const entry = fullLeaderboard.find((e) => e.teamId.toString() === teamId.toString());
-    rank = entry?.rank ?? null;
-  } catch {
-    rank = null;
-  }
+  // Participants never see standings, so rank is not computed here. Doing so
+  // required building the full leaderboard on every results poll.
+  const rank: number | null = null;
 
   return {
     teamName: team.name,
