@@ -372,7 +372,7 @@ function IntegrityContent() {
                                     onClick={() => handleAction('MARK_REVIEWED')}
                                     className="hd-btn hd-btn-ok hd-btn-sm flex-1"
                                   >
-                                    ✓ Mark Reviewed
+                                    {p.isSubmissionsLocked ? '✓ Mark Reviewed & Release' : '✓ Mark Reviewed'}
                                   </button>
                                   {p.isSubmissionsLocked ? (
                                     <button

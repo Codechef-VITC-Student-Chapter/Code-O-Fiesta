@@ -15,7 +15,9 @@ export async function GET() {
     
     return NextResponse.json({
       strictMode: settings.strictMode,
-      copyPasteBlocker: settings.copyPasteBlocker
+      copyPasteBlocker: settings.copyPasteBlocker,
+      // Without this the admin screen and the participant IDE fell back to 5.
+      maxTabSwitches: settings.maxTabSwitches ?? 5,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

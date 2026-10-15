@@ -1,9 +1,10 @@
 'use client';
 
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { SupportedLanguage } from '@/types/problem';
 import { ConstraintViolation } from '@/types/submission';
+import { usePasteBlocker } from '@/hooks/usePasteBlocker';
 
 interface CodeEditorProps {
   value: string;
@@ -116,23 +117,24 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({
     applyDecorations();
   }, [violations]);
 
-  useEffect(() => {
-    const handlePaste = (e: ClipboardEvent) => {
-      if (copyPasteBlocker && editorRef.current) {
-        const domNode = editorRef.current.getDomNode();
-        // Check if the paste target is inside the Monaco editor
-        if (domNode && domNode.contains(e.target as Node)) {
-          e.preventDefault();
-          e.stopPropagation();
-          alert("Pasting code is disabled in this contest.");
-        }
-      }
-    };
+  // Blocked pastes show a small in-page notice. A browser alert() is not used:
+  // it steals focus, which the screen protection reads as leaving the window.
+  const [pasteNotice, setPasteNotice] = useState(false);
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Use capture phase to intercept the event BEFORE Monaco handles it
-    window.addEventListener('paste', handlePaste, true);
-    return () => window.removeEventListener('paste', handlePaste, true);
-  }, [copyPasteBlocker]);
+  usePasteBlocker(
+    () => editorRef.current?.getDomNode(),
+    copyPasteBlocker,
+    () => {
+      setPasteNotice(true);
+      if (noticeTimer.current) clearTimeout(noticeTimer.current);
+      noticeTimer.current = setTimeout(() => setPasteNotice(false), 2500);
+    },
+  );
+
+  useEffect(() => () => {
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
+  }, []);
 
   const MONACO_LANGUAGE_MAP: Record<SupportedLanguage, string> = {
     c: 'c',
@@ -159,6 +161,15 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>(({
           box-shadow: 0 0 0 2px #121210;
         }
       `}} />
+      {pasteNotice && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="absolute right-3 top-3 z-10 rounded border-2 border-ink bg-paper px-3 py-2 font-mono text-xs font-bold text-ink shadow-hd-sm"
+        >
+          Pasting code is disabled in this contest.
+        </div>
+      )}
       <Editor
         height="100%"
         language={MONACO_LANGUAGE_MAP[language]}

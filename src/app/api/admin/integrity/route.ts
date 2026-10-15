@@ -57,8 +57,14 @@ export async function POST(request: Request) {
     }
     
     if (action === 'MARK_REVIEWED') {
+      const wasLocked = participant.isSubmissionsLocked;
       participant.currentStatus = 'NORMAL';
       participant.integrityScore = 0; // Reset score on review
+      // Reviewing a team clears its lock too. Previously the IDE stayed locked
+      // until "Release Submissions" was clicked separately, and the panel closed
+      // after "Mark Reviewed", hiding that button.
+      participant.isSubmissionsLocked = false;
+      participant.awaySessionCount = 0; // so they aren't re-locked on the next switch
       if (note) {
         participant.notes.push({ adminId: session.userId as any, note });
       }
@@ -67,7 +73,9 @@ export async function POST(request: Request) {
       await IntegrityLog.create({
         userId,
         type: 'ADMIN_ACTION',
-        details: 'Marked as reviewed',
+        details: wasLocked
+          ? 'Marked as reviewed (submissions released, tab-switch count reset)'
+          : 'Marked as reviewed',
         severity: 'NONE'
       });
     } else if (action === 'LOCK_SUBMISSIONS') {

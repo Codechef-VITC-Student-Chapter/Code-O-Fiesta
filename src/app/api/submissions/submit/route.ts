@@ -9,6 +9,7 @@ import TeamRound from '@/models/TeamRound';
 import { submitBatch, LANGUAGE_IDS, Judge0Submission } from '@/lib/judge0';
 import { analyzeSourceCode } from '../../_services/ast.service';
 import { requireAuthentication } from '../../_lib/authorization';
+import { assertSubmissionsNotLocked } from '../../_lib/integrity-lock';
 import {
   incrementRound3SubmissionCount,
 } from '../../_services/round3.service';
@@ -45,6 +46,9 @@ export async function POST(request: Request) {
     if (!teamId) {
       return NextResponse.json({ error: 'User is not part of a team' }, { status: 403 });
     }
+
+    // Locked by an admin or by the tab-switch limit (also enforced in the UI).
+    await assertSubmissionsNotLocked(session);
 
     // ── Parse body ────────────────────────────────────────────────────────
     const body = await request.json();
