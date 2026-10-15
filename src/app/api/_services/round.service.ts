@@ -11,6 +11,7 @@ import Problem, { type ProblemDocument } from '@/models/Problem';
 import Round from '@/models/Round';
 import TeamRound from '@/models/TeamRound';
 import { requireAuthentication } from '@/app/api/_lib/authorization';
+import { getActiveProblemIds } from './active-problems';
 import {
   RoundRequestError,
   type PatchRound2CodeInput,
@@ -321,6 +322,77 @@ function startPhase(
   }
 }
 
+function newQuestion(problemId: unknown): Question {
+  return {
+    questionNumber: 0,
+    problemId,
+    activeMember: null,
+    phase: Round2Phase.MEMBER_1,
+    status: 'PENDING',
+    code: '',
+    hasSeenBothPhases: false,
+    member2Submitted: false,
+  };
+}
+
+/**
+ * Keeps a team's Round 2 question list in step with the questions the admin
+ * has added, so every active Round 2 problem is served:
+ * - questions the team has already reached (earlier ones and the current one)
+ *   are never changed;
+ * - the questions still ahead are rebuilt from the active problems, so newly
+ *   added ones are appended and deactivated or deleted ones drop out;
+ * - a slot without a problem is never created (that used to fail validation and
+ *   broke /start, /state and /questions for the whole team).
+ */
+function syncQuestions(
+  teamRound: TeamRoundInstance,
+  activeIds: unknown[],
+) {
+  const r2 = teamRound.round2!;
+  const existing = (r2.questions ?? []).map((q) =>
+    (q as { toObject?: () => Question }).toObject?.() ?? q,
+  );
+
+  const reached =
+    teamRound.status === TeamRoundStatus.NOT_STARTED
+      ? 0
+      : Math.min(r2.currentQuestionNumber ?? 1, existing.length);
+
+  const unused = activeIds.map(String).filter(
+    (id) => !existing.slice(0, reached).some((q) => String(q.problemId) === id),
+  );
+
+  // Reached slots stay as they are; one missing its problem (left behind by the
+  // old code) takes the next unused active problem.
+  const frozen = existing.slice(0, reached).flatMap((q) => {
+    if (q.problemId) return [q];
+    const fill = unused.shift();
+    return fill ? [{ ...q, problemId: fill }] : [];
+  });
+
+  const ahead = unused.map(
+    (id) =>
+      existing.slice(reached).find((q) => String(q.problemId) === id) ??
+      newQuestion(id),
+  );
+
+  const next = [...frozen, ...ahead].map((q, i) => ({
+    ...q,
+    questionNumber: i + 1,
+  }));
+
+  const unchanged =
+    next.length === existing.length &&
+    next.every(
+      (q, i) =>
+        String(q.problemId) === String(existing[i].problemId) &&
+        q.questionNumber === existing[i].questionNumber,
+    );
+
+  if (!unchanged) r2.questions = next;
+}
+
 async function ensureInitialized(
   teamRound: TeamRoundInstance,
   round: RoundDoc,
@@ -334,31 +406,8 @@ async function ensureInitialized(
   r2.phase ??= Round2Phase.MEMBER_1;
   r2.activeMember ??= TeamMember.MEMBER_1;
 
-  const count =
-    round.configuration?.round2?.questionCount ?? 0;
-
-  if (!r2.questions?.length && count > 0) {
-    const problems = await Problem.find({
-      roundNumber: 2,
-      isActive: true,
-    })
-      .sort({ _id: 1 })
-      .limit(count)
-      .lean();
-
-    r2.questions = Array.from(
-      { length: count },
-      (_, i) => ({
-        questionNumber: i + 1,
-        problemId: problems[i]?._id,
-        activeMember: null,
-        phase: Round2Phase.MEMBER_1,
-        status: 'PENDING',
-        code: '',
-        hasSeenBothPhases: false,
-        member2Submitted: false,
-      }),
-    );
+  if (teamRound.status !== TeamRoundStatus.COMPLETED) {
+    syncQuestions(teamRound, await getActiveProblemIds(2));
   }
 
   if (
@@ -464,8 +513,7 @@ async function applyLazyPhaseHandover(
       }
 
       const total =
-        round.configuration?.round2
-          ?.questionCount ?? 0;
+        teamRound.round2.questions?.length ?? 0;
 
       if (
         (teamRound.round2.currentQuestionNumber ?? 1) >=
@@ -600,10 +648,7 @@ async function getState(
       r2.currentQuestionNumber ?? 1,
 
     totalQuestions:
-      round.configuration?.round2
-        ?.questionCount ??
-      r2.questions?.length ??
-      0,
+      r2.questions?.length ?? 0,
 
     currentCode:
       q?.code ?? null,
@@ -882,6 +927,14 @@ async function start(
       round,
       now,
     );
+
+    if (!teamRound.round2.questions?.length) {
+      throw new RoundRequestError(
+        'No Round 2 questions have been added yet. Please wait for the organisers.',
+        409,
+        'NO_QUESTIONS',
+      );
+    }
 
     await teamRound.save();
   }

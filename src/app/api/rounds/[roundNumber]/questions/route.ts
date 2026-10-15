@@ -5,6 +5,7 @@ import connectDB from '@/lib/db';
 import Problem from '@/models/Problem';
 import Round from '@/models/Round';
 import TeamRound from '@/models/TeamRound';
+import { assignRound3Problems } from '@/app/api/_services/round3.service';
 import { requireAuthentication } from '@/app/api/_lib/authorization';
 import {
   getAuthenticatedUser,
@@ -131,6 +132,8 @@ export async function GET(
       if ((round as any).status !== RoundStatus.ACTIVE) {
         return NextResponse.json({ error: 'Round 3 is not currently active' }, { status: 403 });
       }
+      // Picks up questions the admin added since this team started.
+      await assignRound3Problems(new Types.ObjectId(teamId), round._id);
 
       const teamRound = await TeamRound.findOne({
         teamId: new Types.ObjectId(teamId),

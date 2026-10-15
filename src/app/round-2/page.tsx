@@ -47,11 +47,13 @@ function Round2Sidebar({ roundScore }: { roundScore: number }) {
 function Round2PageContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { getRoundScore } = useTeamResults();
 
   const handleEnterRound = async () => {
     try {
       setLoading(true);
+      setError(null);
       // Start the round
       await problemsService.startRound(2);
       
@@ -61,8 +63,8 @@ function Round2PageContent() {
       
       // Fetch questions
       const qsRes = await problemsService.fetchRoundProblems(2);
-      let problemId = 'prob-1'; // fallback
-      
+      let problemId: string | null = null;
+
       const questions = (qsRes as any).questions;
       if (questions && Array.isArray(questions)) {
         const qIdx = qNum - 1;
@@ -72,10 +74,16 @@ function Round2PageContent() {
           problemId = questions[0].problemId;
         }
       }
-      
+
+      if (!problemId) {
+        throw new Error('No Round 2 questions are available yet. Please wait for the organisers.');
+      }
+
       router.push(`/round-2/problem/${problemId}`);
     } catch (err) {
       console.error(err);
+      // Previously swallowed, leaving a button that silently did nothing.
+      setError(err instanceof Error && err.message ? err.message : 'Could not start Round 2. Please try again.');
       setLoading(false);
     }
   };
@@ -140,6 +148,12 @@ function Round2PageContent() {
                 {loading ? 'STARTING...' : 'ENTER ROUND 2'}
                 <span aria-hidden="true">→</span>
               </button>
+
+              {error && (
+                <div role="alert" className="hd-alert hd-alert-bad mt-4 max-w-xl text-ink">
+                  {error}
+                </div>
+              )}
             </div>
           </div>
         </section>

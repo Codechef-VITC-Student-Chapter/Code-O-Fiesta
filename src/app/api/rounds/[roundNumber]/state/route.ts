@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import connectDB from '@/lib/db';
 import TeamRound from '@/models/TeamRound';
 import { requireAuthentication } from '@/app/api/_lib/authorization';
-import { getRound3, getRound3StateForTeam } from '@/app/api/_services/round3.service';
+import { assignRound3Problems, getRound3, getRound3StateForTeam } from '@/app/api/_services/round3.service';
 import { RoundStatus } from '@/constants/event';
 
 import { roundErrorResponse, roundService } from '../../../_services/round.service';
@@ -66,6 +66,9 @@ export async function GET(
         { status: 200 },
       );
     }
+
+    // Picks up questions the admin added since this team started.
+    await assignRound3Problems(new Types.ObjectId(teamId), round._id);
 
     const state = await getRound3StateForTeam(
       new Types.ObjectId(teamId),

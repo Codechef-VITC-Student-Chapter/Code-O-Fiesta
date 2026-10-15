@@ -6,10 +6,10 @@ import Round from '@/models/Round';
 import TeamRound from '@/models/TeamRound';
 import { RoundStatus, TeamRoundStatus } from '@/constants/event';
 import { computeProportionalPoints, maxTestCasesForProblem, POINTS_PER_TEST_CASE } from '@/app/api/_services/scoring.service';
+import { getActiveProblemIds } from '@/app/api/_services/active-problems';
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const ROUND_NUMBER = 3;
-const PROBLEM_COUNT = 3;
 
 // Points — fallback values used when Round.configuration.round3 is unpopulated
 const DEFAULT_BASE_POINTS = 50;
@@ -88,8 +88,14 @@ export async function getRound3() {
 }
 
 /**
- * Assign 3 random round-3 problems to a team's TeamRound (idempotent).
- * Does nothing if problems are already assigned.
+ * Keeps a team's Round 3 problem list in step with the questions the admin has
+ * added (idempotent; safe to call on every read):
+ * - every active Round 3 problem is served, in the order it was added, and a
+ *   problem added mid-round is appended for teams already playing;
+ * - a problem the team has already touched (submitted to or scored on) is kept
+ *   even if it is later deactivated, so no progress or score disappears;
+ * - an untouched problem that was deactivated or deleted drops out.
+ * Does nothing for a team that hasn't started or has completed the round.
  */
 export async function assignRound3Problems(
   teamId: Types.ObjectId | string,
@@ -98,34 +104,46 @@ export async function assignRound3Problems(
   await connectDB();
 
   const teamRound = await TeamRound.findOne({ teamId, roundId });
-  if (!teamRound) return;
+  if (!teamRound || teamRound.status === TeamRoundStatus.COMPLETED) return;
 
-  // Already assigned — don't reassign
-  if (teamRound.round3?.problems && teamRound.round3.problems.length > 0) return;
+  const activeIds = (await getActiveProblemIds(ROUND_NUMBER)).map(String);
+  const active = new Set(activeIds);
 
-  const problems = await Problem.aggregate([
-    { $match: { roundNumber: ROUND_NUMBER, isActive: true } },
-    { $sample: { size: PROBLEM_COUNT } },
-  ]);
+  type Entry = {
+    problemId?: unknown;
+    submissionCount?: number;
+    baseScore?: number;
+    totalScore?: number;
+    baseSolvePassed?: boolean;
+  };
+  const existing = (teamRound.round3?.problems ?? []).map(
+    (p) => ((p as { toObject?: () => Entry }).toObject?.() ?? p) as Entry,
+  );
+  const touched = (p: Entry) =>
+    (p.submissionCount ?? 0) > 0 || (p.baseScore ?? 0) > 0 || (p.totalScore ?? 0) > 0 || !!p.baseSolvePassed;
 
-  if (problems.length === 0) return; // No problems seeded yet — graceful fallback
+  const kept = existing.filter((p) => touched(p) || active.has(String(p.problemId)));
+  const keptIds = new Set(kept.map((p) => String(p.problemId)));
+  const added = activeIds
+    .filter((id) => !keptIds.has(id))
+    .map((id) => ({
+      problemId: new Types.ObjectId(id),
+      baseSolvePassed: false,
+      ouroborosPassed: false,
+      shortAndSweetPassed: false,
+      oneShotWonderPassed: false,
+      oneShotWonderLocked: false,
+      baseScore: 0,
+      bonusScore: 0,
+      totalScore: 0,
+      submissionCount: 0,
+      wrongSubmissionCount: 0,
+      completedAt: null,
+    }));
 
-  const round3Problems = problems.map((p: any) => ({
-    problemId: new Types.ObjectId(p._id.toString()),
-    baseSolvePassed: false,
-    ouroborosPassed: false,
-    shortAndSweetPassed: false,
-    oneShotWonderPassed: false,
-    oneShotWonderLocked: false,
-    baseScore: 0,
-    bonusScore: 0,
-    totalScore: 0,
-    submissionCount: 0,
-    wrongSubmissionCount: 0,
-    completedAt: null,
-  }));
+  if (kept.length === existing.length && added.length === 0) return;
 
-  teamRound.set('round3.problems', round3Problems);
+  teamRound.set('round3.problems', [...kept, ...added]);
   await teamRound.save();
 }
 
