@@ -9,6 +9,8 @@
     "lint": "eslint",
     "seed:round1": "node --env-file=.env.local --import tsx scripts/seed-round1.ts",
     "seed:round3": "node --env-file=.env.local --import tsx scripts/seed-round3.ts",
+    "db:seed-test": "node --import tsx scripts/seed-test-event.ts",
+    "db:reset": "node --import tsx scripts/reset-event.ts",
     "db:indexes": "node --env-file=.env.local --import tsx scripts/create-indexes.ts",
     "round1:active": "node --env-file=.env.local --import tsx scripts/set-round1-active.ts"
   },
@@ -20,6 +22,7 @@
     "jose": "^6.2.10",
     "mongoose": "^9.9.3",
     "next": "16.3.2",
+    "nodemailer": "^8.0.11",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0",
@@ -33,6 +36,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

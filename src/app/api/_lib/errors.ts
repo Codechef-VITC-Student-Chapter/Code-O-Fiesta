@@ -32,6 +32,12 @@ export class BadRequestError extends ApiError {
   }
 }
 
+export class ConflictError extends ApiError {
+  constructor(message = 'Conflict') {
+    super(409, message);
+  }
+}
+
 export class TooManyRequestsError extends ApiError {
   constructor(
     message = 'Too many requests. Please try again later.',

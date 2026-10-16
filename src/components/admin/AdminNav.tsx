@@ -7,6 +7,7 @@ export default function AdminNav() {
 
   const navItems = [
     { name: 'Live Operations', href: '/admin' },
+    { name: 'Registration', href: '/admin/registration' },
     { name: 'Question Manager', href: '/admin/questions' },
     { name: 'Integrity Monitoring', href: '/admin/integrity' },
   ];
