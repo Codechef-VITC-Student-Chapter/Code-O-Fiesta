@@ -8,6 +8,8 @@ export interface RoundProblem {
   difficulty: Difficulty;
   points: number;
   statement: string;
+  inputFormat?: string;
+  outputFormat?: string;
   examples: Example[];
   constraints: string[];
   timeLimit: number;

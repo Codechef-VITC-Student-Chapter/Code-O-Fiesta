@@ -44,7 +44,7 @@ export default function ProblemPanel({
 }: ProblemPanelProps) {
   const [activeTab, setActiveTab] = useState<'statement' | 'examples' | 'constraints' | 'submissions'>('statement');
 
-  const { title, difficulty, points, statement, examples, constraints, timeLimit, memoryLimit } = problem;
+  const { title, difficulty, points, statement, inputFormat, outputFormat, examples, constraints, timeLimit, memoryLimit } = problem;
   const activeRoundNumber = mode === 'constraint' ? 3 : mode === 'relay' ? 2 : (problem.roundNumber || 1);
 
   const getDifficultyBadge = () => {
@@ -129,7 +129,7 @@ export default function ProblemPanel({
             <ProblemHiddenOverlay />
           ) : (
             <>
-              <ProblemStatement statement={statement} mode={mode} activeConstraints={activeConstraints} />
+              <ProblemStatement statement={statement} inputFormat={inputFormat} outputFormat={outputFormat} mode={mode} activeConstraints={activeConstraints} />
               {mode === 'constraint' && (
                 <div className="mt-2 pt-4 pb-4 border-t-2 border-ink">
                   <ConstraintPanel

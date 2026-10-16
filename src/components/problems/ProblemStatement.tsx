@@ -8,11 +8,22 @@ import { IDEMode, CodeConstraint } from '@/types/problem';
 
 interface ProblemStatementProps {
   statement: string;
+  inputFormat?: string;
+  outputFormat?: string;
   mode?: IDEMode;
   activeConstraints?: CodeConstraint[];
 }
 
-export default function ProblemStatement({ statement, mode, activeConstraints }: ProblemStatementProps) {
+export default function ProblemStatement({ statement, inputFormat, outputFormat, mode, activeConstraints }: ProblemStatementProps) {
+  // Show the admin-entered input/output format as sections below the statement.
+  const content = [
+    statement,
+    inputFormat?.trim() && `## Input Format\n\n${inputFormat}`,
+    outputFormat?.trim() && `## Output Format\n\n${outputFormat}`,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
   return (
     <div className="flex flex-col gap-6 text-[15px] sm:text-base text-charcoal select-text leading-[1.65] font-sans pb-8">
       {/* Markdown Content */}
@@ -34,7 +45,7 @@ export default function ProblemStatement({ statement, mode, activeConstraints }:
             li: ({ node, ...props }) => <li className="pl-1" {...props} />,
           }}
         >
-          {statement}
+          {content}
         </ReactMarkdown>
       </div>
 
