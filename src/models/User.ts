@@ -1,0 +1,85 @@
+import mongoose, {
+  Schema,
+  type InferSchemaType,
+  type Model,
+} from 'mongoose';
+
+import { TeamMember, UserRole } from '@/constants/event';
+
+const UserSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+    passwordHash: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: Object.values(UserRole),
+      required: true,
+      default: UserRole.PARTICIPANT,
+    },
+    teamId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Team',
+      default: null,
+    },
+    teamMember: {
+      type: String,
+      enum: Object.values(TeamMember),
+      required(this: { role?: string }) {
+        return this.role === UserRole.PARTICIPANT;
+      },
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    sessionId: {
+      type: String,
+      default: null,
+    },
+  },
+  {
+    collection: 'users',
+    strict: true,
+    timestamps: true,
+  },
+);
+
+// Login looks users up by email (+ teamMember for participants, + role for
+// admins). Without these every login is a full collection scan.
+UserSchema.index({ email: 1, teamMember: 1 });
+UserSchema.index({ email: 1, role: 1 });
+
+UserSchema.index({ teamId: 1 });
+
+UserSchema.index(
+  { teamId: 1, teamMember: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      teamId: { $exists: true, $ne: null },
+      teamMember: { $exists: true, $ne: null },
+    },
+  },
+);
+
+export type UserDocument =
+  InferSchemaType<typeof UserSchema>;
+
+const User =
+  (mongoose.models.User as Model<UserDocument> | undefined) ||
+  mongoose.model<UserDocument>('User', UserSchema);
+
+export default User;
